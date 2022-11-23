@@ -29,3 +29,10 @@ Software and development environment:
 ###
 - STM32CubeIDE (v1.9.0)
 - Debug with ST-Linker
+
+##
+Technical details
+
+###
+Most of the Serial Communication between MCU and sensors / other components are via I2C and GPIO (w/ some UART & DMA)
+To be Updated...
