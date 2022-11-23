@@ -6,11 +6,12 @@ Project repository for HKUST ELEC 3300 Project
 Features:
 
 ###
-- Accident Detection and Alert: Detect Fall
-- Rear Vehicle Detection and Alert
-- RPM Counter, Speed indicator
+- Accident Detection and Alert: Detect Fall 
+- Rear Vehicle Detection and Alert w/ Tail Light Indication
+- RPM Counter, Speed indicator w/ Tail Light Indication
+- Climb uphill / Go downhill motion detection w/ advice
+- Turn signal w/ Tail Light Indication
 - Touch Screen UI
-- Turning Indication
 
 ##
 Hardware:
