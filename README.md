@@ -22,7 +22,8 @@ Hardware:
 - A3144 Hall Effect Sensor
 - 2.8 inches TFT Touch Screen (Resolution: 320*240) with ILI9341_LCD and XPT2046 chip
 
-##Software and development environment:
+##
+Software and development environment:
 
 ###
 - STM32CubeIDE (v1.9.0)
