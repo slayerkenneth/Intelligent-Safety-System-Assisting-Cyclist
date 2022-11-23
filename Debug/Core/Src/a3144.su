@@ -1,0 +1,4 @@
+../Core/Src/a3144.c:20:6:CountRPM	16	static
+../Core/Src/a3144.c:44:7:GetRotationSpeed	8	static
+../Core/Src/a3144.c:67:6:a3144_Init	8	static
+../Core/Src/a3144.c:72:6:HAL_TIM_PeriodElapsedCallback	16	static
