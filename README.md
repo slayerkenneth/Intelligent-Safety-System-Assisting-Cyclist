@@ -2,7 +2,8 @@
 
 Project repository for HKUST ELEC 3300 Project
 
-##Features:
+##
+Features:
 
 ###
 - Accident Detection and Alert: Detect Fall
