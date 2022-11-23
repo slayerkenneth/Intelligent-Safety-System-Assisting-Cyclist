@@ -1,5 +1,5 @@
-Core/Src/lcdtp.o: ../Core/Src/lcdtp.c ../Core/Inc/lcdtp.h \
- ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+Core/Src/lcdtp.o: ../Core/Src/lcdtp.c ../Library_Code/MPU6050.h \
+ ../Core/Inc/main.h ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h \
@@ -26,8 +26,9 @@ Core/Src/lcdtp.o: ../Core/Src/lcdtp.c ../Core/Inc/lcdtp.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Core/Inc/ascii.h
-../Core/Inc/lcdtp.h:
+ ../Core/Inc/lcdtp.h ../Core/Inc/ascii.h
+../Library_Code/MPU6050.h:
+../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h:
@@ -55,4 +56,5 @@ Core/Src/lcdtp.o: ../Core/Src/lcdtp.c ../Core/Inc/lcdtp.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
+../Core/Inc/lcdtp.h:
 ../Core/Inc/ascii.h:

@@ -1,5 +1,5 @@
 Core/Src/vl53l1_platform.o: ../Core/Src/vl53l1_platform.c \
- ../Core/Inc/vl53l1_platform.h ../Core/Inc/vl53l1_types.h \
+ ../Library_Code/MPU6050.h ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -26,9 +26,10 @@ Core/Src/vl53l1_platform.o: ../Core/Src/vl53l1_platform.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
- ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
-../Core/Inc/vl53l1_platform.h:
-../Core/Inc/vl53l1_types.h:
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
+ ../Core/Inc/vl53l1_platform.h ../Core/Inc/vl53l1_types.h
+../Library_Code/MPU6050.h:
+../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h:
@@ -56,3 +57,5 @@ Core/Src/vl53l1_platform.o: ../Core/Src/vl53l1_platform.c \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
+../Core/Inc/vl53l1_platform.h:
+../Core/Inc/vl53l1_types.h:

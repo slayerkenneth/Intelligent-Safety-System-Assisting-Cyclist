@@ -1,0 +1,7 @@
+../Library_Code/MPU6050.c:28:6:MPU6050_Initialize	40	static
+../Library_Code/MPU6050.c:51:6:MPU6050_Read_DeviceID	32	static
+../Library_Code/MPU6050.c:55:6:MPU6050_SetScaleAccelRange	32	static
+../Library_Code/MPU6050.c:62:6:MPU6050_SetScaleGyroRange	32	static
+../Library_Code/MPU6050.c:68:6:MPU6050_Read_Accel	40	static
+../Library_Code/MPU6050.c:112:6:MPU6050_Read_Gyro	40	static
+../Library_Code/MPU6050.c:152:6:MPU6050_Read_Temp	40	static
