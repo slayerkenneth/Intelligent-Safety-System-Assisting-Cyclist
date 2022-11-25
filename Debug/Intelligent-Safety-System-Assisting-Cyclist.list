@@ -3067,7 +3067,7 @@ int main(void)
  8001b86:	f7ff fbf8 	bl	800137a <LCD_INIT>
 
   // Init VL53L1X
-  Dev->I2cHandle = &hi2c1;
+  Dev->I2cHandle = &hi2c2;
  8001b8a:	f8d7 349c 	ldr.w	r3, [r7, #1180]	; 0x49c
  8001b8e:	4ad6      	ldr	r2, [pc, #856]	; (8001ee8 <main+0x398>)
  8001b90:	f8c3 23a0 	str.w	r2, [r3, #928]	; 0x3a0
@@ -3103,7 +3103,7 @@ int main(void)
  8001bc6:	f887 34a7 	strb.w	r3, [r7, #1191]	; 0x4a7
  8001bca:	e03f      	b.n	8001c4c <main+0xfc>
       {
-          ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5);
+          ret = HAL_I2C_IsDeviceReady(&hi2c2, (uint16_t)(i<<1), 3, 5);
  8001bcc:	f897 34a7 	ldrb.w	r3, [r7, #1191]	; 0x4a7
  8001bd0:	b29b      	uxth	r3, r3
  8001bd2:	005b      	lsls	r3, r3, #1
@@ -3217,21 +3217,21 @@ int main(void)
  8001cb0:	f001 f81e 	bl	8002cf0 <WS2812_Send>
 
   MPU6050_Initialize(&hi2c2);
- 8001cb4:	4892      	ldr	r0, [pc, #584]	; (8001f00 <main+0x3b0>)
+ 8001cb4:	488c      	ldr	r0, [pc, #560]	; (8001ee8 <main+0x398>)
  8001cb6:	f00b ff63 	bl	800db80 <MPU6050_Initialize>
   MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);
  8001cba:	2110      	movs	r1, #16
- 8001cbc:	4890      	ldr	r0, [pc, #576]	; (8001f00 <main+0x3b0>)
+ 8001cbc:	488a      	ldr	r0, [pc, #552]	; (8001ee8 <main+0x398>)
  8001cbe:	f00b ffbd 	bl	800dc3c <MPU6050_SetScaleAccelRange>
   MPU6050_SetScaleGyroRange(&hi2c2, MPU6050_GYRO_RANGE_2000_DEG);
  8001cc2:	2118      	movs	r1, #24
- 8001cc4:	488e      	ldr	r0, [pc, #568]	; (8001f00 <main+0x3b0>)
+ 8001cc4:	4888      	ldr	r0, [pc, #544]	; (8001ee8 <main+0x398>)
  8001cc6:	f00b ffd5 	bl	800dc74 <MPU6050_SetScaleGyroRange>
 
   macXPT2046_CS_DISABLE();
  8001cca:	2200      	movs	r2, #0
  8001ccc:	f44f 5100 	mov.w	r1, #8192	; 0x2000
- 8001cd0:	488c      	ldr	r0, [pc, #560]	; (8001f04 <main+0x3b4>)
+ 8001cd0:	488b      	ldr	r0, [pc, #556]	; (8001f00 <main+0x3b0>)
  8001cd2:	f002 fe5c 	bl	800498e <HAL_GPIO_WritePin>
 //  __HAL_RCC_I2C2_CLK_DISABLE();
 //  __HAL_RCC_FSMC_CLK_ENABLE();
@@ -3251,7 +3251,7 @@ int main(void)
  8001ce8:	2032      	movs	r0, #50	; 0x32
  8001cea:	f7ff fd40 	bl	800176e <LCD_Clear>
   LCD_DrawString(65, 105, "SmartBike DEMO");
- 8001cee:	4a86      	ldr	r2, [pc, #536]	; (8001f08 <main+0x3b8>)
+ 8001cee:	4a85      	ldr	r2, [pc, #532]	; (8001f04 <main+0x3b4>)
  8001cf0:	2169      	movs	r1, #105	; 0x69
  8001cf2:	2041      	movs	r0, #65	; 0x41
  8001cf4:	f7ff fda4 	bl	8001840 <LCD_DrawString>
@@ -3331,36 +3331,36 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  MPU6050_Read_Gyro(&hi2c2);
- 8001d7a:	4861      	ldr	r0, [pc, #388]	; (8001f00 <main+0x3b0>)
+ 8001d7a:	485b      	ldr	r0, [pc, #364]	; (8001ee8 <main+0x398>)
  8001d7c:	f00c f90c 	bl	800df98 <MPU6050_Read_Gyro>
 	  MPU6050_Read_Accel(&hi2c2);
- 8001d80:	485f      	ldr	r0, [pc, #380]	; (8001f00 <main+0x3b0>)
+ 8001d80:	4859      	ldr	r0, [pc, #356]	; (8001ee8 <main+0x398>)
  8001d82:	f00b ff93 	bl	800dcac <MPU6050_Read_Accel>
 
 
 	  Ax = MPU6050_Ax;
- 8001d86:	4b61      	ldr	r3, [pc, #388]	; (8001f0c <main+0x3bc>)
+ 8001d86:	4b60      	ldr	r3, [pc, #384]	; (8001f08 <main+0x3b8>)
  8001d88:	681b      	ldr	r3, [r3, #0]
  8001d8a:	f8c7 348c 	str.w	r3, [r7, #1164]	; 0x48c
 	  Ay = MPU6050_Ay;
- 8001d8e:	4b60      	ldr	r3, [pc, #384]	; (8001f10 <main+0x3c0>)
+ 8001d8e:	4b5f      	ldr	r3, [pc, #380]	; (8001f0c <main+0x3bc>)
  8001d90:	681b      	ldr	r3, [r3, #0]
  8001d92:	f8c7 3488 	str.w	r3, [r7, #1160]	; 0x488
 	  Az = MPU6050_Az;
- 8001d96:	4b5f      	ldr	r3, [pc, #380]	; (8001f14 <main+0x3c4>)
+ 8001d96:	4b5e      	ldr	r3, [pc, #376]	; (8001f10 <main+0x3c0>)
  8001d98:	681b      	ldr	r3, [r3, #0]
  8001d9a:	f8c7 3484 	str.w	r3, [r7, #1156]	; 0x484
 
 	  Gx = MPU6050_Gx;
- 8001d9e:	4b5e      	ldr	r3, [pc, #376]	; (8001f18 <main+0x3c8>)
+ 8001d9e:	4b5d      	ldr	r3, [pc, #372]	; (8001f14 <main+0x3c4>)
  8001da0:	681b      	ldr	r3, [r3, #0]
  8001da2:	f8c7 3480 	str.w	r3, [r7, #1152]	; 0x480
 	  Gy = MPU6050_Gy;
- 8001da6:	4b5d      	ldr	r3, [pc, #372]	; (8001f1c <main+0x3cc>)
+ 8001da6:	4b5c      	ldr	r3, [pc, #368]	; (8001f18 <main+0x3c8>)
  8001da8:	681b      	ldr	r3, [r3, #0]
  8001daa:	f8c7 347c 	str.w	r3, [r7, #1148]	; 0x47c
 	  Gz = MPU6050_Gz;
- 8001dae:	4b5c      	ldr	r3, [pc, #368]	; (8001f20 <main+0x3d0>)
+ 8001dae:	4b5b      	ldr	r3, [pc, #364]	; (8001f1c <main+0x3cc>)
  8001db0:	681b      	ldr	r3, [r3, #0]
  8001db2:	f8c7 3478 	str.w	r3, [r7, #1144]	; 0x478
 
@@ -3370,7 +3370,7 @@ int main(void)
  8001dbe:	4602      	mov	r2, r0
  8001dc0:	460b      	mov	r3, r1
  8001dc2:	f107 0014 	add.w	r0, r7, #20
- 8001dc6:	4957      	ldr	r1, [pc, #348]	; (8001f24 <main+0x3d4>)
+ 8001dc6:	4956      	ldr	r1, [pc, #344]	; (8001f20 <main+0x3d0>)
  8001dc8:	f00c ff04 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(20, 20, buf);
  8001dcc:	f107 0314 	add.w	r3, r7, #20
@@ -3385,7 +3385,7 @@ int main(void)
  8001de2:	4602      	mov	r2, r0
  8001de4:	460b      	mov	r3, r1
  8001de6:	f107 0014 	add.w	r0, r7, #20
- 8001dea:	494f      	ldr	r1, [pc, #316]	; (8001f28 <main+0x3d8>)
+ 8001dea:	494e      	ldr	r1, [pc, #312]	; (8001f24 <main+0x3d4>)
  8001dec:	f00c fef2 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(20, 40, buf);
  8001df0:	f107 0314 	add.w	r3, r7, #20
@@ -3400,7 +3400,7 @@ int main(void)
  8001e06:	4602      	mov	r2, r0
  8001e08:	460b      	mov	r3, r1
  8001e0a:	f107 0014 	add.w	r0, r7, #20
- 8001e0e:	4947      	ldr	r1, [pc, #284]	; (8001f2c <main+0x3dc>)
+ 8001e0e:	4946      	ldr	r1, [pc, #280]	; (8001f28 <main+0x3d8>)
  8001e10:	f00c fee0 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(20, 60, buf);
  8001e14:	f107 0314 	add.w	r3, r7, #20
@@ -3415,7 +3415,7 @@ int main(void)
  8001e2a:	4602      	mov	r2, r0
  8001e2c:	460b      	mov	r3, r1
  8001e2e:	f107 0014 	add.w	r0, r7, #20
- 8001e32:	493f      	ldr	r1, [pc, #252]	; (8001f30 <main+0x3e0>)
+ 8001e32:	493e      	ldr	r1, [pc, #248]	; (8001f2c <main+0x3dc>)
  8001e34:	f00c fece 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(20, 80, buf);
  8001e38:	f107 0314 	add.w	r3, r7, #20
@@ -3430,7 +3430,7 @@ int main(void)
  8001e4e:	4602      	mov	r2, r0
  8001e50:	460b      	mov	r3, r1
  8001e52:	f107 0014 	add.w	r0, r7, #20
- 8001e56:	4937      	ldr	r1, [pc, #220]	; (8001f34 <main+0x3e4>)
+ 8001e56:	4936      	ldr	r1, [pc, #216]	; (8001f30 <main+0x3e0>)
  8001e58:	f00c febc 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(20, 100, buf);
  8001e5c:	f107 0314 	add.w	r3, r7, #20
@@ -3445,7 +3445,7 @@ int main(void)
  8001e72:	4602      	mov	r2, r0
  8001e74:	460b      	mov	r3, r1
  8001e76:	f107 0014 	add.w	r0, r7, #20
- 8001e7a:	492f      	ldr	r1, [pc, #188]	; (8001f38 <main+0x3e8>)
+ 8001e7a:	492e      	ldr	r1, [pc, #184]	; (8001f34 <main+0x3e4>)
  8001e7c:	f00c feaa 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(20, 120, buf);
  8001e80:	f107 0314 	add.w	r3, r7, #20
@@ -3464,11 +3464,11 @@ int main(void)
  8001ea2:	2b00      	cmp	r3, #0
  8001ea4:	d005      	beq.n	8001eb2 <main+0x362>
 		  LCD_DrawString(80, 140, "Pitch Down");
- 8001ea6:	4a25      	ldr	r2, [pc, #148]	; (8001f3c <main+0x3ec>)
+ 8001ea6:	4a24      	ldr	r2, [pc, #144]	; (8001f38 <main+0x3e8>)
  8001ea8:	218c      	movs	r1, #140	; 0x8c
  8001eaa:	2050      	movs	r0, #80	; 0x50
  8001eac:	f7ff fcc8 	bl	8001840 <LCD_DrawString>
- 8001eb0:	e04d      	b.n	8001f4e <main+0x3fe>
+ 8001eb0:	e04b      	b.n	8001f4a <main+0x3fa>
 	  } else if (Ay > 0.55){
  8001eb2:	f8d7 0488 	ldr.w	r0, [r7, #1160]	; 0x488
  8001eb6:	f7fe fb23 	bl	8000500 <__aeabi_f2d>
@@ -3477,305 +3477,305 @@ int main(void)
  8001ec0:	f7fe fe06 	bl	8000ad0 <__aeabi_dcmpgt>
  8001ec4:	4603      	mov	r3, r0
  8001ec6:	2b00      	cmp	r3, #0
- 8001ec8:	d03c      	beq.n	8001f44 <main+0x3f4>
+ 8001ec8:	d03a      	beq.n	8001f40 <main+0x3f0>
 		  LCD_DrawString(80, 140, " Pitch up ");
- 8001eca:	4a1d      	ldr	r2, [pc, #116]	; (8001f40 <main+0x3f0>)
+ 8001eca:	4a1c      	ldr	r2, [pc, #112]	; (8001f3c <main+0x3ec>)
  8001ecc:	218c      	movs	r1, #140	; 0x8c
  8001ece:	2050      	movs	r0, #80	; 0x50
  8001ed0:	f7ff fcb6 	bl	8001840 <LCD_DrawString>
- 8001ed4:	e03b      	b.n	8001f4e <main+0x3fe>
+ 8001ed4:	e039      	b.n	8001f4a <main+0x3fa>
  8001ed6:	bf00      	nop
  8001ed8:	9999999a 	.word	0x9999999a
  8001edc:	bfe19999 	.word	0xbfe19999
  8001ee0:	9999999a 	.word	0x9999999a
  8001ee4:	3fe19999 	.word	0x3fe19999
- 8001ee8:	20000390 	.word	0x20000390
+ 8001ee8:	200003e4 	.word	0x200003e4
  8001eec:	40010c00 	.word	0x40010c00
  8001ef0:	080110f0 	.word	0x080110f0
  8001ef4:	000186a0 	.word	0x000186a0
  8001ef8:	080110f8 	.word	0x080110f8
  8001efc:	00989680 	.word	0x00989680
- 8001f00:	200003e4 	.word	0x200003e4
- 8001f04:	40011400 	.word	0x40011400
- 8001f08:	080110fc 	.word	0x080110fc
- 8001f0c:	20000308 	.word	0x20000308
- 8001f10:	200002f0 	.word	0x200002f0
- 8001f14:	20000294 	.word	0x20000294
- 8001f18:	2000029c 	.word	0x2000029c
- 8001f1c:	200002f4 	.word	0x200002f4
- 8001f20:	2000030c 	.word	0x2000030c
- 8001f24:	0801110c 	.word	0x0801110c
- 8001f28:	08011118 	.word	0x08011118
- 8001f2c:	08011124 	.word	0x08011124
- 8001f30:	08011130 	.word	0x08011130
- 8001f34:	0801113c 	.word	0x0801113c
- 8001f38:	08011148 	.word	0x08011148
- 8001f3c:	08011154 	.word	0x08011154
- 8001f40:	08011160 	.word	0x08011160
+ 8001f00:	40011400 	.word	0x40011400
+ 8001f04:	080110fc 	.word	0x080110fc
+ 8001f08:	20000308 	.word	0x20000308
+ 8001f0c:	200002f0 	.word	0x200002f0
+ 8001f10:	20000294 	.word	0x20000294
+ 8001f14:	2000029c 	.word	0x2000029c
+ 8001f18:	200002f4 	.word	0x200002f4
+ 8001f1c:	2000030c 	.word	0x2000030c
+ 8001f20:	0801110c 	.word	0x0801110c
+ 8001f24:	08011118 	.word	0x08011118
+ 8001f28:	08011124 	.word	0x08011124
+ 8001f2c:	08011130 	.word	0x08011130
+ 8001f30:	0801113c 	.word	0x0801113c
+ 8001f34:	08011148 	.word	0x08011148
+ 8001f38:	08011154 	.word	0x08011154
+ 8001f3c:	08011160 	.word	0x08011160
 	  } else{
 		  LCD_DrawString(80, 140, "No Pitch  ");
- 8001f44:	4a8a      	ldr	r2, [pc, #552]	; (8002170 <main+0x620>)
- 8001f46:	218c      	movs	r1, #140	; 0x8c
- 8001f48:	2050      	movs	r0, #80	; 0x50
- 8001f4a:	f7ff fc79 	bl	8001840 <LCD_DrawString>
+ 8001f40:	4a8b      	ldr	r2, [pc, #556]	; (8002170 <main+0x620>)
+ 8001f42:	218c      	movs	r1, #140	; 0x8c
+ 8001f44:	2050      	movs	r0, #80	; 0x50
+ 8001f46:	f7ff fc7b 	bl	8001840 <LCD_DrawString>
 	  }
 
 	  if (Ax < -0.55){
- 8001f4e:	f8d7 048c 	ldr.w	r0, [r7, #1164]	; 0x48c
- 8001f52:	f7fe fad5 	bl	8000500 <__aeabi_f2d>
- 8001f56:	a380      	add	r3, pc, #512	; (adr r3, 8002158 <main+0x608>)
- 8001f58:	e9d3 2300 	ldrd	r2, r3, [r3]
- 8001f5c:	f7fe fd9a 	bl	8000a94 <__aeabi_dcmplt>
- 8001f60:	4603      	mov	r3, r0
- 8001f62:	2b00      	cmp	r3, #0
- 8001f64:	d005      	beq.n	8001f72 <main+0x422>
+ 8001f4a:	f8d7 048c 	ldr.w	r0, [r7, #1164]	; 0x48c
+ 8001f4e:	f7fe fad7 	bl	8000500 <__aeabi_f2d>
+ 8001f52:	a381      	add	r3, pc, #516	; (adr r3, 8002158 <main+0x608>)
+ 8001f54:	e9d3 2300 	ldrd	r2, r3, [r3]
+ 8001f58:	f7fe fd9c 	bl	8000a94 <__aeabi_dcmplt>
+ 8001f5c:	4603      	mov	r3, r0
+ 8001f5e:	2b00      	cmp	r3, #0
+ 8001f60:	d005      	beq.n	8001f6e <main+0x41e>
 		  LCD_DrawString(90, 160, " Right ");
- 8001f66:	4a83      	ldr	r2, [pc, #524]	; (8002174 <main+0x624>)
- 8001f68:	21a0      	movs	r1, #160	; 0xa0
- 8001f6a:	205a      	movs	r0, #90	; 0x5a
- 8001f6c:	f7ff fc68 	bl	8001840 <LCD_DrawString>
- 8001f70:	e016      	b.n	8001fa0 <main+0x450>
+ 8001f62:	4a84      	ldr	r2, [pc, #528]	; (8002174 <main+0x624>)
+ 8001f64:	21a0      	movs	r1, #160	; 0xa0
+ 8001f66:	205a      	movs	r0, #90	; 0x5a
+ 8001f68:	f7ff fc6a 	bl	8001840 <LCD_DrawString>
+ 8001f6c:	e016      	b.n	8001f9c <main+0x44c>
 	  } else if (Ax > 0.55){
- 8001f72:	f8d7 048c 	ldr.w	r0, [r7, #1164]	; 0x48c
- 8001f76:	f7fe fac3 	bl	8000500 <__aeabi_f2d>
- 8001f7a:	a379      	add	r3, pc, #484	; (adr r3, 8002160 <main+0x610>)
- 8001f7c:	e9d3 2300 	ldrd	r2, r3, [r3]
- 8001f80:	f7fe fda6 	bl	8000ad0 <__aeabi_dcmpgt>
- 8001f84:	4603      	mov	r3, r0
- 8001f86:	2b00      	cmp	r3, #0
- 8001f88:	d005      	beq.n	8001f96 <main+0x446>
+ 8001f6e:	f8d7 048c 	ldr.w	r0, [r7, #1164]	; 0x48c
+ 8001f72:	f7fe fac5 	bl	8000500 <__aeabi_f2d>
+ 8001f76:	a37a      	add	r3, pc, #488	; (adr r3, 8002160 <main+0x610>)
+ 8001f78:	e9d3 2300 	ldrd	r2, r3, [r3]
+ 8001f7c:	f7fe fda8 	bl	8000ad0 <__aeabi_dcmpgt>
+ 8001f80:	4603      	mov	r3, r0
+ 8001f82:	2b00      	cmp	r3, #0
+ 8001f84:	d005      	beq.n	8001f92 <main+0x442>
 		  LCD_DrawString(90, 160, " Left ");
- 8001f8a:	4a7b      	ldr	r2, [pc, #492]	; (8002178 <main+0x628>)
- 8001f8c:	21a0      	movs	r1, #160	; 0xa0
- 8001f8e:	205a      	movs	r0, #90	; 0x5a
- 8001f90:	f7ff fc56 	bl	8001840 <LCD_DrawString>
- 8001f94:	e004      	b.n	8001fa0 <main+0x450>
+ 8001f86:	4a7c      	ldr	r2, [pc, #496]	; (8002178 <main+0x628>)
+ 8001f88:	21a0      	movs	r1, #160	; 0xa0
+ 8001f8a:	205a      	movs	r0, #90	; 0x5a
+ 8001f8c:	f7ff fc58 	bl	8001840 <LCD_DrawString>
+ 8001f90:	e004      	b.n	8001f9c <main+0x44c>
 	  }	else{
 		  LCD_DrawString(90, 160, " Still ");
- 8001f96:	4a79      	ldr	r2, [pc, #484]	; (800217c <main+0x62c>)
- 8001f98:	21a0      	movs	r1, #160	; 0xa0
- 8001f9a:	205a      	movs	r0, #90	; 0x5a
- 8001f9c:	f7ff fc50 	bl	8001840 <LCD_DrawString>
+ 8001f92:	4a7a      	ldr	r2, [pc, #488]	; (800217c <main+0x62c>)
+ 8001f94:	21a0      	movs	r1, #160	; 0xa0
+ 8001f96:	205a      	movs	r0, #90	; 0x5a
+ 8001f98:	f7ff fc52 	bl	8001840 <LCD_DrawString>
 	  }
 
 	  if (Az < 0) {
- 8001fa0:	f04f 0100 	mov.w	r1, #0
- 8001fa4:	f8d7 0484 	ldr.w	r0, [r7, #1156]	; 0x484
- 8001fa8:	f7ff f8f6 	bl	8001198 <__aeabi_fcmplt>
- 8001fac:	4603      	mov	r3, r0
- 8001fae:	2b00      	cmp	r3, #0
- 8001fb0:	d00b      	beq.n	8001fca <main+0x47a>
+ 8001f9c:	f04f 0100 	mov.w	r1, #0
+ 8001fa0:	f8d7 0484 	ldr.w	r0, [r7, #1156]	; 0x484
+ 8001fa4:	f7ff f8f8 	bl	8001198 <__aeabi_fcmplt>
+ 8001fa8:	4603      	mov	r3, r0
+ 8001faa:	2b00      	cmp	r3, #0
+ 8001fac:	d00b      	beq.n	8001fc6 <main+0x476>
 		  LCD_DrawString_Color(90, 180, " Crash?? ", RED, BLACK);
- 8001fb2:	2300      	movs	r3, #0
- 8001fb4:	9300      	str	r3, [sp, #0]
- 8001fb6:	f44f 4378 	mov.w	r3, #63488	; 0xf800
- 8001fba:	4a71      	ldr	r2, [pc, #452]	; (8002180 <main+0x630>)
- 8001fbc:	21b4      	movs	r1, #180	; 0xb4
- 8001fbe:	205a      	movs	r0, #90	; 0x5a
- 8001fc0:	f7ff fcde 	bl	8001980 <LCD_DrawString_Color>
+ 8001fae:	2300      	movs	r3, #0
+ 8001fb0:	9300      	str	r3, [sp, #0]
+ 8001fb2:	f44f 4378 	mov.w	r3, #63488	; 0xf800
+ 8001fb6:	4a72      	ldr	r2, [pc, #456]	; (8002180 <main+0x630>)
+ 8001fb8:	21b4      	movs	r1, #180	; 0xb4
+ 8001fba:	205a      	movs	r0, #90	; 0x5a
+ 8001fbc:	f7ff fce0 	bl	8001980 <LCD_DrawString_Color>
 		  SafetyStatus = 2;
- 8001fc4:	2302      	movs	r3, #2
- 8001fc6:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
+ 8001fc0:	2302      	movs	r3, #2
+ 8001fc2:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
 	  }
 
 
 	  HAL_Delay(200);
- 8001fca:	20c8      	movs	r0, #200	; 0xc8
- 8001fcc:	f001 fdba 	bl	8003b44 <HAL_Delay>
+ 8001fc6:	20c8      	movs	r0, #200	; 0xc8
+ 8001fc8:	f001 fdbc 	bl	8003b44 <HAL_Delay>
 
 	  if ( touchFlag == 0 )
- 8001fd0:	f8d7 34a0 	ldr.w	r3, [r7, #1184]	; 0x4a0
- 8001fd4:	2b00      	cmp	r3, #0
- 8001fd6:	d160      	bne.n	800209a <main+0x54a>
+ 8001fcc:	f8d7 34a0 	ldr.w	r3, [r7, #1184]	; 0x4a0
+ 8001fd0:	2b00      	cmp	r3, #0
+ 8001fd2:	d160      	bne.n	8002096 <main+0x546>
 	  {
 		  if ( XPT2046_Get_TouchedPoint ( & touchCoordinate, & strXPT2046_TouchPara ) )
- 8001fd8:	1d3b      	adds	r3, r7, #4
- 8001fda:	496a      	ldr	r1, [pc, #424]	; (8002184 <main+0x634>)
- 8001fdc:	4618      	mov	r0, r3
- 8001fde:	f001 fca1 	bl	8003924 <XPT2046_Get_TouchedPoint>
- 8001fe2:	4603      	mov	r3, r0
- 8001fe4:	2b00      	cmp	r3, #0
- 8001fe6:	d054      	beq.n	8002092 <main+0x542>
+ 8001fd4:	1d3b      	adds	r3, r7, #4
+ 8001fd6:	496b      	ldr	r1, [pc, #428]	; (8002184 <main+0x634>)
+ 8001fd8:	4618      	mov	r0, r3
+ 8001fda:	f001 fca3 	bl	8003924 <XPT2046_Get_TouchedPoint>
+ 8001fde:	4603      	mov	r3, r0
+ 8001fe0:	2b00      	cmp	r3, #0
+ 8001fe2:	d054      	beq.n	800208e <main+0x53e>
 		  {
 			  if ( ( touchCoordinate->y > 232 ) && ( touchCoordinate->y < 282 ) )
- 8001fe8:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
- 8001fec:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
- 8001ff0:	885b      	ldrh	r3, [r3, #2]
- 8001ff2:	2be8      	cmp	r3, #232	; 0xe8
- 8001ff4:	d94d      	bls.n	8002092 <main+0x542>
- 8001ff6:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
- 8001ffa:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
- 8001ffe:	885b      	ldrh	r3, [r3, #2]
- 8002000:	f5b3 7f8d 	cmp.w	r3, #282	; 0x11a
- 8002004:	d245      	bcs.n	8002092 <main+0x542>
+ 8001fe4:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
+ 8001fe8:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
+ 8001fec:	885b      	ldrh	r3, [r3, #2]
+ 8001fee:	2be8      	cmp	r3, #232	; 0xe8
+ 8001ff0:	d94d      	bls.n	800208e <main+0x53e>
+ 8001ff2:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
+ 8001ff6:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
+ 8001ffa:	885b      	ldrh	r3, [r3, #2]
+ 8001ffc:	f5b3 7f8d 	cmp.w	r3, #282	; 0x11a
+ 8002000:	d245      	bcs.n	800208e <main+0x53e>
 			  {
 				  if ( ( touchCoordinate->x > 95 ) && ( touchCoordinate->x < 145 ) )
- 8002006:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
- 800200a:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
- 800200e:	881b      	ldrh	r3, [r3, #0]
- 8002010:	2b5f      	cmp	r3, #95	; 0x5f
- 8002012:	d920      	bls.n	8002056 <main+0x506>
- 8002014:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
- 8002018:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
- 800201c:	881b      	ldrh	r3, [r3, #0]
- 800201e:	2b90      	cmp	r3, #144	; 0x90
- 8002020:	d819      	bhi.n	8002056 <main+0x506>
+ 8002002:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
+ 8002006:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
+ 800200a:	881b      	ldrh	r3, [r3, #0]
+ 800200c:	2b5f      	cmp	r3, #95	; 0x5f
+ 800200e:	d920      	bls.n	8002052 <main+0x502>
+ 8002010:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
+ 8002014:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
+ 8002018:	881b      	ldrh	r3, [r3, #0]
+ 800201a:	2b90      	cmp	r3, #144	; 0x90
+ 800201c:	d819      	bhi.n	8002052 <main+0x502>
 				  {
 					  LCD_DrawString(71, 200, "     Reset    ");
- 8002022:	4a59      	ldr	r2, [pc, #356]	; (8002188 <main+0x638>)
- 8002024:	21c8      	movs	r1, #200	; 0xc8
- 8002026:	2047      	movs	r0, #71	; 0x47
- 8002028:	f7ff fc0a 	bl	8001840 <LCD_DrawString>
+ 800201e:	4a5a      	ldr	r2, [pc, #360]	; (8002188 <main+0x638>)
+ 8002020:	21c8      	movs	r1, #200	; 0xc8
+ 8002022:	2047      	movs	r0, #71	; 0x47
+ 8002024:	f7ff fc0c 	bl	8001840 <LCD_DrawString>
 					  SafetyStatus = 0;
- 800202c:	2300      	movs	r3, #0
- 800202e:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
+ 8002028:	2300      	movs	r3, #0
+ 800202a:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
 					  LCD_Clear(90, 180, 90, 20, WHITE);
- 8002032:	f64f 73ff 	movw	r3, #65535	; 0xffff
- 8002036:	9300      	str	r3, [sp, #0]
- 8002038:	2314      	movs	r3, #20
- 800203a:	225a      	movs	r2, #90	; 0x5a
- 800203c:	21b4      	movs	r1, #180	; 0xb4
- 800203e:	205a      	movs	r0, #90	; 0x5a
- 8002040:	f7ff fb95 	bl	800176e <LCD_Clear>
+ 800202e:	f64f 73ff 	movw	r3, #65535	; 0xffff
+ 8002032:	9300      	str	r3, [sp, #0]
+ 8002034:	2314      	movs	r3, #20
+ 8002036:	225a      	movs	r2, #90	; 0x5a
+ 8002038:	21b4      	movs	r1, #180	; 0xb4
+ 800203a:	205a      	movs	r0, #90	; 0x5a
+ 800203c:	f7ff fb97 	bl	800176e <LCD_Clear>
 					  LCD_Clear(70, 200, 90, 20, WHITE);
- 8002044:	f64f 73ff 	movw	r3, #65535	; 0xffff
- 8002048:	9300      	str	r3, [sp, #0]
- 800204a:	2314      	movs	r3, #20
- 800204c:	225a      	movs	r2, #90	; 0x5a
- 800204e:	21c8      	movs	r1, #200	; 0xc8
- 8002050:	2046      	movs	r0, #70	; 0x46
- 8002052:	f7ff fb8c 	bl	800176e <LCD_Clear>
+ 8002040:	f64f 73ff 	movw	r3, #65535	; 0xffff
+ 8002044:	9300      	str	r3, [sp, #0]
+ 8002046:	2314      	movs	r3, #20
+ 8002048:	225a      	movs	r2, #90	; 0x5a
+ 800204a:	21c8      	movs	r1, #200	; 0xc8
+ 800204c:	2046      	movs	r0, #70	; 0x46
+ 800204e:	f7ff fb8e 	bl	800176e <LCD_Clear>
 				  }
 
 				  if (touchCoordinate->x < 90)
- 8002056:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
- 800205a:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
- 800205e:	881b      	ldrh	r3, [r3, #0]
- 8002060:	2b59      	cmp	r3, #89	; 0x59
- 8002062:	d807      	bhi.n	8002074 <main+0x524>
+ 8002052:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
+ 8002056:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
+ 800205a:	881b      	ldrh	r3, [r3, #0]
+ 800205c:	2b59      	cmp	r3, #89	; 0x59
+ 800205e:	d807      	bhi.n	8002070 <main+0x520>
 				  {
 					  SafetyStatus = 1;
- 8002064:	2301      	movs	r3, #1
- 8002066:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
+ 8002060:	2301      	movs	r3, #1
+ 8002062:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
 					  LCD_DrawString(71, 200, "Turning Left! ");
- 800206a:	4a48      	ldr	r2, [pc, #288]	; (800218c <main+0x63c>)
- 800206c:	21c8      	movs	r1, #200	; 0xc8
- 800206e:	2047      	movs	r0, #71	; 0x47
- 8002070:	f7ff fbe6 	bl	8001840 <LCD_DrawString>
+ 8002066:	4a49      	ldr	r2, [pc, #292]	; (800218c <main+0x63c>)
+ 8002068:	21c8      	movs	r1, #200	; 0xc8
+ 800206a:	2047      	movs	r0, #71	; 0x47
+ 800206c:	f7ff fbe8 	bl	8001840 <LCD_DrawString>
 				  }
 
 				  if (touchCoordinate->x > 150)
- 8002074:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
- 8002078:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
- 800207c:	881b      	ldrh	r3, [r3, #0]
- 800207e:	2b96      	cmp	r3, #150	; 0x96
- 8002080:	d907      	bls.n	8002092 <main+0x542>
+ 8002070:	f507 6395 	add.w	r3, r7, #1192	; 0x4a8
+ 8002074:	f2a3 43a4 	subw	r3, r3, #1188	; 0x4a4
+ 8002078:	881b      	ldrh	r3, [r3, #0]
+ 800207a:	2b96      	cmp	r3, #150	; 0x96
+ 800207c:	d907      	bls.n	800208e <main+0x53e>
 				  {
 					  SafetyStatus = 1;
- 8002082:	2301      	movs	r3, #1
- 8002084:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
+ 800207e:	2301      	movs	r3, #1
+ 8002080:	f8c7 3498 	str.w	r3, [r7, #1176]	; 0x498
 					  LCD_DrawString(71, 200, "Turning Right!");
- 8002088:	4a41      	ldr	r2, [pc, #260]	; (8002190 <main+0x640>)
- 800208a:	21c8      	movs	r1, #200	; 0xc8
- 800208c:	2047      	movs	r0, #71	; 0x47
- 800208e:	f7ff fbd7 	bl	8001840 <LCD_DrawString>
+ 8002084:	4a42      	ldr	r2, [pc, #264]	; (8002190 <main+0x640>)
+ 8002086:	21c8      	movs	r1, #200	; 0xc8
+ 8002088:	2047      	movs	r0, #71	; 0x47
+ 800208a:	f7ff fbd9 	bl	8001840 <LCD_DrawString>
 				  }
 			  }
 
 		  }
 		  touchFlag = 1;
- 8002092:	2301      	movs	r3, #1
- 8002094:	f8c7 34a0 	str.w	r3, [r7, #1184]	; 0x4a0
- 8002098:	e002      	b.n	80020a0 <main+0x550>
+ 800208e:	2301      	movs	r3, #1
+ 8002090:	f8c7 34a0 	str.w	r3, [r7, #1184]	; 0x4a0
+ 8002094:	e002      	b.n	800209c <main+0x54c>
 	  }
 	  else {
 //		  LCD_DrawString(70, 200, "..............");
 		  touchFlag = 0;
- 800209a:	2300      	movs	r3, #0
- 800209c:	f8c7 34a0 	str.w	r3, [r7, #1184]	; 0x4a0
+ 8002096:	2300      	movs	r3, #0
+ 8002098:	f8c7 34a0 	str.w	r3, [r7, #1184]	; 0x4a0
 	  }
 	  HAL_Delay(50);
- 80020a0:	2032      	movs	r0, #50	; 0x32
- 80020a2:	f001 fd4f 	bl	8003b44 <HAL_Delay>
+ 800209c:	2032      	movs	r0, #50	; 0x32
+ 800209e:	f001 fd51 	bl	8003b44 <HAL_Delay>
 
 
 
 	  rotSpeed = GetRotationSpeed();
- 80020a6:	f7ff f8fb 	bl	80012a0 <GetRotationSpeed>
- 80020aa:	f8c7 0494 	str.w	r0, [r7, #1172]	; 0x494
+ 80020a2:	f7ff f8fd 	bl	80012a0 <GetRotationSpeed>
+ 80020a6:	f8c7 0494 	str.w	r0, [r7, #1172]	; 0x494
 	  sprintf(buf, "RotSpeed: %0.2f", rotSpeed);
- 80020ae:	f8d7 0494 	ldr.w	r0, [r7, #1172]	; 0x494
- 80020b2:	f7fe fa25 	bl	8000500 <__aeabi_f2d>
- 80020b6:	4602      	mov	r2, r0
- 80020b8:	460b      	mov	r3, r1
- 80020ba:	f107 0014 	add.w	r0, r7, #20
- 80020be:	4935      	ldr	r1, [pc, #212]	; (8002194 <main+0x644>)
- 80020c0:	f00c fd88 	bl	800ebd4 <siprintf>
+ 80020aa:	f8d7 0494 	ldr.w	r0, [r7, #1172]	; 0x494
+ 80020ae:	f7fe fa27 	bl	8000500 <__aeabi_f2d>
+ 80020b2:	4602      	mov	r2, r0
+ 80020b4:	460b      	mov	r3, r1
+ 80020b6:	f107 0014 	add.w	r0, r7, #20
+ 80020ba:	4936      	ldr	r1, [pc, #216]	; (8002194 <main+0x644>)
+ 80020bc:	f00c fd8a 	bl	800ebd4 <siprintf>
 	  LCD_DrawString(30, 0, buf);
- 80020c4:	f107 0314 	add.w	r3, r7, #20
- 80020c8:	461a      	mov	r2, r3
- 80020ca:	2100      	movs	r1, #0
- 80020cc:	201e      	movs	r0, #30
- 80020ce:	f7ff fbb7 	bl	8001840 <LCD_DrawString>
+ 80020c0:	f107 0314 	add.w	r3, r7, #20
+ 80020c4:	461a      	mov	r2, r3
+ 80020c6:	2100      	movs	r1, #0
+ 80020c8:	201e      	movs	r0, #30
+ 80020ca:	f7ff fbb9 	bl	8001840 <LCD_DrawString>
 
 	  // Get Distance Sensor Data
 	  VL53L1_WaitMeasurementDataReady( Dev );
- 80020d2:	f8d7 049c 	ldr.w	r0, [r7, #1180]	; 0x49c
- 80020d6:	f006 ff7b 	bl	8008fd0 <VL53L1_WaitMeasurementDataReady>
+ 80020ce:	f8d7 049c 	ldr.w	r0, [r7, #1180]	; 0x49c
+ 80020d2:	f006 ff7d 	bl	8008fd0 <VL53L1_WaitMeasurementDataReady>
 
 	  VL53L1_GetRangingMeasurementData( Dev, &RangingData );
- 80020da:	f507 6385 	add.w	r3, r7, #1064	; 0x428
- 80020de:	4619      	mov	r1, r3
- 80020e0:	f8d7 049c 	ldr.w	r0, [r7, #1180]	; 0x49c
- 80020e4:	f007 f92e 	bl	8009344 <VL53L1_GetRangingMeasurementData>
+ 80020d6:	f507 6385 	add.w	r3, r7, #1064	; 0x428
+ 80020da:	4619      	mov	r1, r3
+ 80020dc:	f8d7 049c 	ldr.w	r0, [r7, #1180]	; 0x49c
+ 80020e0:	f007 f930 	bl	8009344 <VL53L1_GetRangingMeasurementData>
 
 	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f", RangingData.RangeStatus, RangingData.RangeMilliMeter,
- 80020e8:	f897 3443 	ldrb.w	r3, [r7, #1091]	; 0x443
- 80020ec:	461e      	mov	r6, r3
- 80020ee:	f9b7 3440 	ldrsh.w	r3, [r7, #1088]	; 0x440
- 80020f2:	4698      	mov	r8, r3
+ 80020e4:	f897 3443 	ldrb.w	r3, [r7, #1091]	; 0x443
+ 80020e8:	461e      	mov	r6, r3
+ 80020ea:	f9b7 3440 	ldrsh.w	r3, [r7, #1088]	; 0x440
+ 80020ee:	4698      	mov	r8, r3
 	  		( RangingData.SignalRateRtnMegaCps / 65536.0 ), RangingData.AmbientRateRtnMegaCps / 65336.0 );
- 80020f4:	f8d7 3430 	ldr.w	r3, [r7, #1072]	; 0x430
+ 80020f0:	f8d7 3430 	ldr.w	r3, [r7, #1072]	; 0x430
 	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f", RangingData.RangeStatus, RangingData.RangeMilliMeter,
- 80020f8:	4618      	mov	r0, r3
- 80020fa:	f7fe f9df 	bl	80004bc <__aeabi_ui2d>
- 80020fe:	f04f 0200 	mov.w	r2, #0
- 8002102:	4b25      	ldr	r3, [pc, #148]	; (8002198 <main+0x648>)
- 8002104:	f7fe fb7e 	bl	8000804 <__aeabi_ddiv>
- 8002108:	4602      	mov	r2, r0
- 800210a:	460b      	mov	r3, r1
- 800210c:	4614      	mov	r4, r2
- 800210e:	461d      	mov	r5, r3
+ 80020f4:	4618      	mov	r0, r3
+ 80020f6:	f7fe f9e1 	bl	80004bc <__aeabi_ui2d>
+ 80020fa:	f04f 0200 	mov.w	r2, #0
+ 80020fe:	4b26      	ldr	r3, [pc, #152]	; (8002198 <main+0x648>)
+ 8002100:	f7fe fb80 	bl	8000804 <__aeabi_ddiv>
+ 8002104:	4602      	mov	r2, r0
+ 8002106:	460b      	mov	r3, r1
+ 8002108:	4614      	mov	r4, r2
+ 800210a:	461d      	mov	r5, r3
 	  		( RangingData.SignalRateRtnMegaCps / 65536.0 ), RangingData.AmbientRateRtnMegaCps / 65336.0 );
- 8002110:	f8d7 3434 	ldr.w	r3, [r7, #1076]	; 0x434
+ 800210c:	f8d7 3434 	ldr.w	r3, [r7, #1076]	; 0x434
 	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f", RangingData.RangeStatus, RangingData.RangeMilliMeter,
- 8002114:	4618      	mov	r0, r3
- 8002116:	f7fe f9d1 	bl	80004bc <__aeabi_ui2d>
- 800211a:	a313      	add	r3, pc, #76	; (adr r3, 8002168 <main+0x618>)
- 800211c:	e9d3 2300 	ldrd	r2, r3, [r3]
- 8002120:	f7fe fb70 	bl	8000804 <__aeabi_ddiv>
- 8002124:	4602      	mov	r2, r0
- 8002126:	460b      	mov	r3, r1
- 8002128:	f207 4044 	addw	r0, r7, #1092	; 0x444
- 800212c:	e9cd 2302 	strd	r2, r3, [sp, #8]
- 8002130:	e9cd 4500 	strd	r4, r5, [sp]
- 8002134:	4643      	mov	r3, r8
- 8002136:	4632      	mov	r2, r6
- 8002138:	4918      	ldr	r1, [pc, #96]	; (800219c <main+0x64c>)
- 800213a:	f00c fd4b 	bl	800ebd4 <siprintf>
+ 8002110:	4618      	mov	r0, r3
+ 8002112:	f7fe f9d3 	bl	80004bc <__aeabi_ui2d>
+ 8002116:	a314      	add	r3, pc, #80	; (adr r3, 8002168 <main+0x618>)
+ 8002118:	e9d3 2300 	ldrd	r2, r3, [r3]
+ 800211c:	f7fe fb72 	bl	8000804 <__aeabi_ddiv>
+ 8002120:	4602      	mov	r2, r0
+ 8002122:	460b      	mov	r3, r1
+ 8002124:	f207 4044 	addw	r0, r7, #1092	; 0x444
+ 8002128:	e9cd 2302 	strd	r2, r3, [sp, #8]
+ 800212c:	e9cd 4500 	strd	r4, r5, [sp]
+ 8002130:	4643      	mov	r3, r8
+ 8002132:	4632      	mov	r2, r6
+ 8002134:	4919      	ldr	r1, [pc, #100]	; (800219c <main+0x64c>)
+ 8002136:	f00c fd4d 	bl	800ebd4 <siprintf>
 
 	  VL53L1_ClearInterruptAndStartMeasurement( Dev );
- 800213e:	f8d7 049c 	ldr.w	r0, [r7, #1180]	; 0x49c
- 8002142:	f006 ff2f 	bl	8008fa4 <VL53L1_ClearInterruptAndStartMeasurement>
+ 800213a:	f8d7 049c 	ldr.w	r0, [r7, #1180]	; 0x49c
+ 800213e:	f006 ff31 	bl	8008fa4 <VL53L1_ClearInterruptAndStartMeasurement>
 	  LCD_DrawString(0, 200, buff);
- 8002146:	f207 4344 	addw	r3, r7, #1092	; 0x444
- 800214a:	461a      	mov	r2, r3
- 800214c:	21c8      	movs	r1, #200	; 0xc8
- 800214e:	2000      	movs	r0, #0
- 8002150:	f7ff fb76 	bl	8001840 <LCD_DrawString>
+ 8002142:	f207 4344 	addw	r3, r7, #1092	; 0x444
+ 8002146:	461a      	mov	r2, r3
+ 8002148:	21c8      	movs	r1, #200	; 0xc8
+ 800214a:	2000      	movs	r0, #0
+ 800214c:	f7ff fb78 	bl	8001840 <LCD_DrawString>
 	  MPU6050_Read_Gyro(&hi2c2);
- 8002154:	e611      	b.n	8001d7a <main+0x22a>
- 8002156:	bf00      	nop
+ 8002150:	e613      	b.n	8001d7a <main+0x22a>
+ 8002152:	bf00      	nop
+ 8002154:	f3af 8000 	nop.w
  8002158:	9999999a 	.word	0x9999999a
  800215c:	bfe19999 	.word	0xbfe19999
  8002160:	9999999a 	.word	0x9999999a

@@ -129,7 +129,7 @@ int main(void)
   LCD_INIT();
 
   // Init VL53L1X
-  Dev->I2cHandle = &hi2c1;
+  Dev->I2cHandle = &hi2c2;
   Dev->I2cDevAddr = 0x52;
 
   HAL_GPIO_WritePin(XSHUT_GPIO_Port, XSHUT_Pin, GPIO_PIN_RESET);
@@ -142,7 +142,7 @@ int main(void)
       char text[100];
       for(i=1; i<128; i++)
       {
-          ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5);
+          ret = HAL_I2C_IsDeviceReady(&hi2c2, (uint16_t)(i<<1), 3, 5);
           if (ret != HAL_OK) /* No ACK Received At That Address */
           {
         	  sprintf(text, "no %d", i);
