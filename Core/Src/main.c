@@ -32,6 +32,7 @@
 #include "MPU6050.h"
 #include "a3144.h"
 #include "VL53L1X_api.h"
+#include "VL53L1X_calibration.h"
 
 /* USER CODE END Includes */
 
@@ -50,7 +51,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- I2C_HandleTypeDef hi2c2;
+ I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c2;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
@@ -70,13 +72,23 @@ static void MX_DMA_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-
+uint16_t	dev=0x52;
+int status=0;
+volatile int IntCount;
+#define isInterrupt 1 /* If isInterrupt = 1 then device working in interrupt mode, else device working in polling mode */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+//{
+//	if (GPIO_Pin==VL53L1X_INT_Pin)
+//	{
+//		IntCount++;
+//	}
+//}
 /* USER CODE END 0 */
 
 /**
@@ -86,6 +98,17 @@ static void MX_TIM3_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+	//For VL53L1X ToF Sensor
+	uint8_t byteData, sensorState=0;
+	uint16_t wordData;
+	uint8_t ToFSensor = 1; // 0=Left, 1=Center(default), 2=Right
+	uint16_t Distance;
+	uint16_t SignalRate;
+	uint16_t AmbientRate;
+	uint16_t SpadNum;
+	uint8_t RangeStatus;
+	uint8_t dataReady;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -111,6 +134,7 @@ int main(void)
   MX_I2C2_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   Set_LED(0, 255, 255, 0);
   WS2812_Send();
@@ -151,6 +175,46 @@ int main(void)
   a3144_Init();
   float rotSpeed = 0;
   float tempSpeed = 0;
+
+
+  /*
+   * VL53L1X ToF Sensor init sequence
+   * */
+
+  VL53L1X_SensorInit(dev);
+  ToFSensor =  1; // Select ToFSensor: 0=Left, 1=Center, 2=Right
+//  status = XNUCLEO53L1A1_ResetId(ToFSensor, 0); // Reset ToF sensor
+//  HAL_Delay(2);
+//  status = XNUCLEO53L1A1_ResetId(ToFSensor, 1); // Reset ToF sensor
+  HAL_Delay(2);
+
+  /* Those basic I2C read functions can be used to check your own I2C functions */
+    status = VL53L1_RdByte(dev, 0x010F, &byteData);
+//    printf("VL53L1X Model_ID: %X\n", byteData);
+    status = VL53L1_RdByte(dev, 0x0110, &byteData);
+//    printf("VL53L1X Module_Type: %X\n", byteData);
+    status = VL53L1_RdWord(dev, 0x010F, &wordData);
+//    printf("VL53L1X: %X\n", wordData);
+    while(sensorState==0){
+  		status = VL53L1X_BootState(dev, &sensorState);
+  		HAL_Delay(2);
+    }
+//    printf("Chip booted\n");
+
+    /* This function must to be called to initialize the sensor with the default setting  */
+    status = VL53L1X_SensorInit(dev);
+    /* Optional functions to be used to change the main ranging parameters according the application requirements to get the best ranging performances */
+    status = VL53L1X_SetDistanceMode(dev, 2); /* 1=short, 2=long */
+    status = VL53L1X_SetTimingBudgetInMs(dev, 100); /* in ms possible values [20, 50, 100, 200, 500] */
+    status = VL53L1X_SetInterMeasurementInMs(dev, 100); /* in ms, IM must be > = TB */
+  //  status = VL53L1X_SetOffset(dev,20); /* offset compensation in mm */
+  //  status = VL53L1X_SetROI(dev, 16, 16); /* minimum ROI 4,4 */
+  //	status = VL53L1X_CalibrateOffset(dev, 140, &offset); /* may take few second to perform the offset cal*/
+  //	status = VL53L1X_CalibrateXtalk(dev, 1000, &xtalk); /* may take few second to perform the xtalk cal */
+//    printf("VL53L1X Ultra Lite Driver Example running ...\n");
+    status = VL53L1X_StartRanging(dev);   /* This function has to be called to enable the ranging */
+
+    LCD_DrawString(10, 0, "Finish setting up VL53L1X");
 
   /* USER CODE END 2 */
 
@@ -259,6 +323,18 @@ int main(void)
 	  sprintf(buf, "RotSpeed: %0.2f", rotSpeed);
 	  LCD_DrawString(30, 0, buf);
 
+	  while (dataReady == 0){
+		  status = VL53L1X_CheckForDataReady(dev, &dataReady);
+		  HAL_Delay(2);
+	  }
+	  dataReady = 0;
+	  status = VL53L1X_GetRangeStatus(dev, &RangeStatus);
+	  status = VL53L1X_GetDistance(dev, &Distance);
+	  status = VL53L1X_GetSignalRate(dev, &SignalRate);
+	  status = VL53L1X_GetAmbientRate(dev, &AmbientRate);
+	  status = VL53L1X_GetSpadNb(dev, &SpadNum);
+	  status = VL53L1X_ClearInterrupt(dev); /* clear interrupt has to be called to enable next interrupt*/
+
   }
   /* USER CODE END 3 */
 }
@@ -300,6 +376,40 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
 }
 
 /**

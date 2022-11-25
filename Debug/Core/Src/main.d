@@ -29,7 +29,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Library_Code/MPU6050.h \
  ../Core/Inc/lcdtp.h ../Core/Inc/xpt2046.h ../Core/Inc/ws2812.h \
  ../Core/Inc/main.h ../Library_Code/MPU6050.h ../Core/Inc/a3144.h \
  ../Core/Inc/VL53L1X_api.h ../Core/Inc/vl53l1_platform.h \
- ../Core/Inc/vl53l1_types.h
+ ../Core/Inc/vl53l1_types.h ../Core/Inc/VL53L1X_calibration.h
 ../Library_Code/MPU6050.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -68,3 +68,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Library_Code/MPU6050.h \
 ../Core/Inc/VL53L1X_api.h:
 ../Core/Inc/vl53l1_platform.h:
 ../Core/Inc/vl53l1_types.h:
+../Core/Inc/VL53L1X_calibration.h:
