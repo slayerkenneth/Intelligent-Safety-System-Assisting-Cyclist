@@ -129,7 +129,7 @@ int main(void)
   LCD_INIT();
 
   // Init VL53L1X
-  Dev->I2cHandle = &hi2c2;
+  Dev->I2cHandle = &hi2c1;
   Dev->I2cDevAddr = 0x52;
 
   HAL_GPIO_WritePin(XSHUT_GPIO_Port, XSHUT_Pin, GPIO_PIN_RESET);
@@ -138,20 +138,23 @@ int main(void)
   HAL_Delay(2);
 
   //  /*-[ I2C Bus Scanning ]-*/
-      uint8_t i = 0, ret;
+      uint8_t i=0, ret;
       char text[100];
-      for(int i=1; i<128; i++)
+      for(i=1; i<128; i++)
       {
-          ret = HAL_I2C_IsDeviceReady(&hi2c2, (uint16_t)(i<<1), 3, 5);
+          ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5);
           if (ret != HAL_OK) /* No ACK Received At That Address */
           {
-        	  //sprintf(text, "no %d", i);
-              //println(&huart1,text);
+        	  sprintf(text, "no %d", i);
+        	  LCD_DrawString(65, 105, text);
+        	  Delay(100000);
+        	  //println(&huart1,text);
           }
           else if(ret == HAL_OK)
           {
         	  sprintf(text, "%x", i << 1);
-        	  LCD_DrawString(65, 105, text);
+        	  LCD_DrawString(85, 125, text);
+        	  Delay(10000000);
           }
       }
 
@@ -197,10 +200,9 @@ int main(void)
   Set_LED(0, 255, 255, 0);
   WS2812_Send();
 
-  //t
-//  MPU6050_Initialize(&hi2c2);
-//  MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);
-//  MPU6050_SetScaleGyroRange(&hi2c2, MPU6050_GYRO_RANGE_2000_DEG);
+  MPU6050_Initialize(&hi2c2);
+  MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);
+  MPU6050_SetScaleGyroRange(&hi2c2, MPU6050_GYRO_RANGE_2000_DEG);
 
   macXPT2046_CS_DISABLE();
 //  __HAL_RCC_I2C2_CLK_DISABLE();
@@ -246,37 +248,35 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  //t
-//	  MPU6050_Read_Gyro(&hi2c2);
-//	  MPU6050_Read_Accel(&hi2c2);
-//
-//
-//	  Ax = MPU6050_Ax;
-//	  Ay = MPU6050_Ay;
-//	  Az = MPU6050_Az;
-//
-//	  Gx = MPU6050_Gx;
-//	  Gy = MPU6050_Gy;
-//	  Gz = MPU6050_Gz;
-//
-//	  sprintf(buf, "Ax: %0.2f", Ax);
-//	  LCD_DrawString(20, 20, buf);
-//
-//	  sprintf(buf, "Ay: %0.2f", Ay);
-//	  LCD_DrawString(20, 40, buf);
-//
-//	  sprintf(buf, "Az: %0.2f", Az);
-//	  LCD_DrawString(20, 60, buf);
-//
-//	  sprintf(buf, "Gx: %0.2f", Gx);
-//	  LCD_DrawString(20, 80, buf);
-//
-//	  sprintf(buf, "Gy: %0.2f", Gy);
-//	  LCD_DrawString(20, 100, buf);
-//
-//	  sprintf(buf, "Gz: %0.2f", Gz);
-//	  LCD_DrawString(20, 120, buf);
-	  //t
+	  MPU6050_Read_Gyro(&hi2c2);
+	  MPU6050_Read_Accel(&hi2c2);
+
+
+	  Ax = MPU6050_Ax;
+	  Ay = MPU6050_Ay;
+	  Az = MPU6050_Az;
+
+	  Gx = MPU6050_Gx;
+	  Gy = MPU6050_Gy;
+	  Gz = MPU6050_Gz;
+
+	  sprintf(buf, "Ax: %0.2f", Ax);
+	  LCD_DrawString(20, 20, buf);
+
+	  sprintf(buf, "Ay: %0.2f", Ay);
+	  LCD_DrawString(20, 40, buf);
+
+	  sprintf(buf, "Az: %0.2f", Az);
+	  LCD_DrawString(20, 60, buf);
+
+	  sprintf(buf, "Gx: %0.2f", Gx);
+	  LCD_DrawString(20, 80, buf);
+
+	  sprintf(buf, "Gy: %0.2f", Gy);
+	  LCD_DrawString(20, 100, buf);
+
+	  sprintf(buf, "Gz: %0.2f", Gz);
+	  LCD_DrawString(20, 120, buf);
 
 	  if (Ay < -0.55){
 		  LCD_DrawString(80, 140, "Pitch Down");
@@ -349,7 +349,7 @@ int main(void)
 
 	  VL53L1_GetRangingMeasurementData( Dev, &RangingData );
 
-	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f\n\r", RangingData.RangeStatus, RangingData.RangeMilliMeter,
+	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f", RangingData.RangeStatus, RangingData.RangeMilliMeter,
 	  		( RangingData.SignalRateRtnMegaCps / 65536.0 ), RangingData.AmbientRateRtnMegaCps / 65336.0 );
 
 	  VL53L1_ClearInterruptAndStartMeasurement( Dev );
