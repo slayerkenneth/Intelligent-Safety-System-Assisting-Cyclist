@@ -10,6 +10,8 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include Library_Code/subdir.mk
+-include Drivers/VL53L1X/platform/src/subdir.mk
+-include Drivers/VL53L1X/core/src/subdir.mk
 -include Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
@@ -62,7 +64,7 @@ main-build: Intelligent-Safety-System-Assisting-Cyclist.elf secondary-outputs
 
 # Tool invocations
 Intelligent-Safety-System-Assisting-Cyclist.elf Intelligent-Safety-System-Assisting-Cyclist.map: $(OBJS) $(USER_OBJS) /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/STM32F103VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -u _printf_float -o "Intelligent-Safety-System-Assisting-Cyclist.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/STM32F103VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Intelligent-Safety-System-Assisting-Cyclist.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -u _printf_float -o "Intelligent-Safety-System-Assisting-Cyclist.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/STM32F103VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Intelligent-Safety-System-Assisting-Cyclist.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

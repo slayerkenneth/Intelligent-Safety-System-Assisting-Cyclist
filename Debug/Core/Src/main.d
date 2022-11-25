@@ -28,8 +28,26 @@ Core/Src/main.o: ../Core/Src/main.c ../Library_Code/MPU6050.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Core/Inc/lcdtp.h ../Core/Inc/xpt2046.h ../Core/Inc/ws2812.h \
  ../Core/Inc/main.h ../Library_Code/MPU6050.h ../Core/Inc/a3144.h \
- ../Core/Inc/VL53L1X_api.h ../Core/Inc/vl53l1_platform.h \
- ../Core/Inc/vl53l1_types.h ../Core/Inc/VL53L1X_calibration.h
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api_strings.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_def.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_ll_def.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_ll_device.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_types.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_user_config.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_error_codes.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_register_structs.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_register_map.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_user_defines.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_error_exceptions.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api_core.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_ll_def.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_log.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_ipp_imports.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_user_data.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_def.h \
+ /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_preset_setup.h
 ../Library_Code/MPU6050.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -65,7 +83,23 @@ Core/Src/main.o: ../Core/Src/main.c ../Library_Code/MPU6050.h \
 ../Core/Inc/main.h:
 ../Library_Code/MPU6050.h:
 ../Core/Inc/a3144.h:
-../Core/Inc/VL53L1X_api.h:
-../Core/Inc/vl53l1_platform.h:
-../Core/Inc/vl53l1_types.h:
-../Core/Inc/VL53L1X_calibration.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api_strings.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_def.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_ll_def.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_ll_device.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_types.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_user_config.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_error_codes.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_register_structs.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_register_map.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_user_defines.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_error_exceptions.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api_core.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_ll_def.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_log.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_ipp_imports.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/platform/inc/vl53l1_platform_user_data.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_def.h:
+/Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_preset_setup.h:

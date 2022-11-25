@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define LCD_BL_GPIO_Port GPIOD
 #define XPT2046_SPI_CS_Pin GPIO_PIN_13
 #define XPT2046_SPI_CS_GPIO_Port GPIOD
+#define XSHUT_Pin GPIO_PIN_5
+#define XSHUT_GPIO_Port GPIOB
 #define VL53_SCL_Pin GPIO_PIN_6
 #define VL53_SCL_GPIO_Port GPIOB
 #define VL53_SDA_Pin GPIO_PIN_7

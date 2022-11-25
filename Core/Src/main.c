@@ -31,9 +31,7 @@
 
 #include "MPU6050.h"
 #include "a3144.h"
-#include "VL53L1X_api.h"
-#include "VL53L1X_calibration.h"
-
+#include "vl53l1_api.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,7 +59,8 @@ DMA_HandleTypeDef hdma_tim1_ch1;
 SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
-
+//#define EXPANDER_1_ADDR 0x84 // 0x42 << 1
+//#define EXPANDER_2_ADDR 0x86 // 0x43 << 1HAL_I2C_Master_Transmit
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -74,10 +73,6 @@ static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-uint16_t	dev=0x52;
-int status=0;
-volatile int IntCount;
-#define isInterrupt 1 /* If isInterrupt = 1 then device working in interrupt mode, else device working in polling mode */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -98,17 +93,12 @@ volatile int IntCount;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	// VL53L1X new Attempt with 07Ver
+	uint8_t buff[50];
+	VL53L1_RangingMeasurementData_t RangingData;
+	VL53L1_Dev_t  vl53l1_c; // center module
+	VL53L1_DEV    Dev = &vl53l1_c;
 
-	//For VL53L1X ToF Sensor
-	uint8_t byteData, sensorState=0;
-	uint16_t wordData;
-	uint8_t ToFSensor = 1; // 0=Left, 1=Center(default), 2=Right
-	uint16_t Distance;
-	uint16_t SignalRate;
-	uint16_t AmbientRate;
-	uint16_t SpadNum;
-	uint8_t RangeStatus;
-	uint8_t dataReady;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -136,18 +126,89 @@ int main(void)
   MX_TIM3_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  LCD_INIT();
+
+  // Init VL53L1X
+  Dev->I2cHandle = &hi2c2;
+  Dev->I2cDevAddr = 0x52;
+
+  HAL_GPIO_WritePin(XSHUT_GPIO_Port, XSHUT_Pin, GPIO_PIN_RESET);
+  HAL_Delay(2); // 2ms reset time
+  HAL_GPIO_WritePin(XSHUT_GPIO_Port, XSHUT_Pin, GPIO_PIN_SET);
+  HAL_Delay(2);
+
+  //  /*-[ I2C Bus Scanning ]-*/
+      uint8_t i = 0, ret;
+      char text[100];
+      for(int i=1; i<128; i++)
+      {
+          ret = HAL_I2C_IsDeviceReady(&hi2c2, (uint16_t)(i<<1), 3, 5);
+          if (ret != HAL_OK) /* No ACK Received At That Address */
+          {
+        	  //sprintf(text, "no %d", i);
+              //println(&huart1,text);
+          }
+          else if(ret == HAL_OK)
+          {
+        	  sprintf(text, "%x", i << 1);
+        	  LCD_DrawString(65, 105, text);
+          }
+      }
+
+      Delay(10000);
+//  /*** Initialize GPIO expanders ***/
+////  // Unused GPIO should be configured as outputs to minimize the power consumption
+//  buff[0] = 0x14; // GPDR (GPIO set direction register)
+//  buff[1] = 0xFF; // GPIO_0 - GPIO_7
+//  buff[2] = 0xFF; // GPIO_8 - GPIO_15
+//  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_1_ADDR, buff, 3, 0xFFFF );
+//  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_2_ADDR, buff, 3, 0xFFFF );
+//
+//  // clear XSHUT (disable center module) -> expander 1, GPIO_15
+//  buff[0] = 0x13; // GPSR + 1 ( GPIO set pin state register)
+//  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_1_ADDR, buff, 1, 0xFFFF );
+//  HAL_I2C_Master_Receive( &hi2c1, EXPANDER_1_ADDR, buff, 1, 0xFFFF );
+//  buff[1] = buff[0] & ~( 1 << ( 15 - 8 ) ); // clear GPIO_15
+//  buff[0] = 0x13; // GPSR + 1 ( GPIO set pin state register)
+//  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_1_ADDR, buff, 2, 0xFFFF );
+//
+//  HAL_Delay( 2 ); // 2ms reset time
+//
+//  // set XSHUT (enable center module) -> expander 1, GPIO_15
+//  buff[0] = 0x13; // GPSR + 1 ( GPIO set pin state)
+//  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_1_ADDR, buff, 1, 0xFFFF );
+//  HAL_I2C_Master_Receive( &hi2c1, EXPANDER_1_ADDR, buff, 1, 0xFFFF );
+//  buff[1] = buff[0] | ( 1 << ( 15 - 8 ) ); // set GPIO_15
+//  buff[0] = 0x13; // GPSR + 1 ( GPIO set pin state register)
+//  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_1_ADDR, buff, 2, 0xFFFF );
+
+  HAL_Delay( 2 );
+//
+  VL53L1_WaitDeviceBooted( Dev );
+  VL53L1_DataInit( Dev );
+  VL53L1_StaticInit( Dev );
+  VL53L1_SetDistanceMode( Dev, VL53L1_DISTANCEMODE_LONG );
+  VL53L1_SetMeasurementTimingBudgetMicroSeconds( Dev, 50000 );
+  VL53L1_SetInterMeasurementPeriodMilliSeconds( Dev, 500 );
+  VL53L1_StartMeasurement( Dev );
+
+  // End VL53L1X init
+
   Set_LED(0, 255, 255, 0);
   WS2812_Send();
 
-  MPU6050_Initialize(&hi2c2);
-  MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);
-  MPU6050_SetScaleGyroRange(&hi2c2, MPU6050_GYRO_RANGE_2000_DEG);
+  //t
+//  MPU6050_Initialize(&hi2c2);
+//  MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);
+//  MPU6050_SetScaleGyroRange(&hi2c2, MPU6050_GYRO_RANGE_2000_DEG);
 
   macXPT2046_CS_DISABLE();
 //  __HAL_RCC_I2C2_CLK_DISABLE();
 //  __HAL_RCC_FSMC_CLK_ENABLE();
 
-  LCD_INIT();
+//  LCD_INIT();
+
+   Delay(100000);
 
   LCD_Clear (50, 80, 140, 70, RED);
   LCD_DrawString(65, 105, "SmartBike DEMO");
@@ -176,46 +237,6 @@ int main(void)
   float rotSpeed = 0;
   float tempSpeed = 0;
 
-
-  /*
-   * VL53L1X ToF Sensor init sequence
-   * */
-
-  VL53L1X_SensorInit(dev);
-  ToFSensor =  1; // Select ToFSensor: 0=Left, 1=Center, 2=Right
-//  status = XNUCLEO53L1A1_ResetId(ToFSensor, 0); // Reset ToF sensor
-//  HAL_Delay(2);
-//  status = XNUCLEO53L1A1_ResetId(ToFSensor, 1); // Reset ToF sensor
-  HAL_Delay(2);
-
-  /* Those basic I2C read functions can be used to check your own I2C functions */
-    status = VL53L1_RdByte(dev, 0x010F, &byteData);
-//    printf("VL53L1X Model_ID: %X\n", byteData);
-    status = VL53L1_RdByte(dev, 0x0110, &byteData);
-//    printf("VL53L1X Module_Type: %X\n", byteData);
-    status = VL53L1_RdWord(dev, 0x010F, &wordData);
-//    printf("VL53L1X: %X\n", wordData);
-    while(sensorState==0){
-  		status = VL53L1X_BootState(dev, &sensorState);
-  		HAL_Delay(2);
-    }
-//    printf("Chip booted\n");
-
-    /* This function must to be called to initialize the sensor with the default setting  */
-    status = VL53L1X_SensorInit(dev);
-    /* Optional functions to be used to change the main ranging parameters according the application requirements to get the best ranging performances */
-    status = VL53L1X_SetDistanceMode(dev, 2); /* 1=short, 2=long */
-    status = VL53L1X_SetTimingBudgetInMs(dev, 100); /* in ms possible values [20, 50, 100, 200, 500] */
-    status = VL53L1X_SetInterMeasurementInMs(dev, 100); /* in ms, IM must be > = TB */
-  //  status = VL53L1X_SetOffset(dev,20); /* offset compensation in mm */
-  //  status = VL53L1X_SetROI(dev, 16, 16); /* minimum ROI 4,4 */
-  //	status = VL53L1X_CalibrateOffset(dev, 140, &offset); /* may take few second to perform the offset cal*/
-  //	status = VL53L1X_CalibrateXtalk(dev, 1000, &xtalk); /* may take few second to perform the xtalk cal */
-//    printf("VL53L1X Ultra Lite Driver Example running ...\n");
-    status = VL53L1X_StartRanging(dev);   /* This function has to be called to enable the ranging */
-
-    LCD_DrawString(10, 0, "Finish setting up VL53L1X");
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -225,37 +246,37 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  MPU6050_Read_DeviceID(&hi2c2);
-	  MPU6050_Read_Gyro(&hi2c2);
-	  MPU6050_Read_Accel(&hi2c2);
-//	  MPU6050_Read_Temp(&hi2c2);
-//	  HAL_Delay(500);
-
-	  Ax = MPU6050_Ax;
-	  Ay = MPU6050_Ay;
-	  Az = MPU6050_Az;
-
-	  Gx = MPU6050_Gx;
-	  Gy = MPU6050_Gy;
-	  Gz = MPU6050_Gz;
-
-	  sprintf(buf, "Ax: %0.2f", Ax);
-	  LCD_DrawString(20, 20, buf);
-
-	  sprintf(buf, "Ay: %0.2f", Ay);
-	  LCD_DrawString(20, 40, buf);
-
-	  sprintf(buf, "Az: %0.2f", Az);
-	  LCD_DrawString(20, 60, buf);
-
-	  sprintf(buf, "Gx: %0.2f", Gx);
-	  LCD_DrawString(20, 80, buf);
-
-	  sprintf(buf, "Gy: %0.2f", Gy);
-	  LCD_DrawString(20, 100, buf);
-
-	  sprintf(buf, "Gz: %0.2f", Gz);
-	  LCD_DrawString(20, 120, buf);
+	  //t
+//	  MPU6050_Read_Gyro(&hi2c2);
+//	  MPU6050_Read_Accel(&hi2c2);
+//
+//
+//	  Ax = MPU6050_Ax;
+//	  Ay = MPU6050_Ay;
+//	  Az = MPU6050_Az;
+//
+//	  Gx = MPU6050_Gx;
+//	  Gy = MPU6050_Gy;
+//	  Gz = MPU6050_Gz;
+//
+//	  sprintf(buf, "Ax: %0.2f", Ax);
+//	  LCD_DrawString(20, 20, buf);
+//
+//	  sprintf(buf, "Ay: %0.2f", Ay);
+//	  LCD_DrawString(20, 40, buf);
+//
+//	  sprintf(buf, "Az: %0.2f", Az);
+//	  LCD_DrawString(20, 60, buf);
+//
+//	  sprintf(buf, "Gx: %0.2f", Gx);
+//	  LCD_DrawString(20, 80, buf);
+//
+//	  sprintf(buf, "Gy: %0.2f", Gy);
+//	  LCD_DrawString(20, 100, buf);
+//
+//	  sprintf(buf, "Gz: %0.2f", Gz);
+//	  LCD_DrawString(20, 120, buf);
+	  //t
 
 	  if (Ay < -0.55){
 		  LCD_DrawString(80, 140, "Pitch Down");
@@ -323,17 +344,16 @@ int main(void)
 	  sprintf(buf, "RotSpeed: %0.2f", rotSpeed);
 	  LCD_DrawString(30, 0, buf);
 
-	  while (dataReady == 0){
-		  status = VL53L1X_CheckForDataReady(dev, &dataReady);
-		  HAL_Delay(2);
-	  }
-	  dataReady = 0;
-	  status = VL53L1X_GetRangeStatus(dev, &RangeStatus);
-	  status = VL53L1X_GetDistance(dev, &Distance);
-	  status = VL53L1X_GetSignalRate(dev, &SignalRate);
-	  status = VL53L1X_GetAmbientRate(dev, &AmbientRate);
-	  status = VL53L1X_GetSpadNb(dev, &SpadNum);
-	  status = VL53L1X_ClearInterrupt(dev); /* clear interrupt has to be called to enable next interrupt*/
+	  // Get Distance Sensor Data
+	  VL53L1_WaitMeasurementDataReady( Dev );
+
+	  VL53L1_GetRangingMeasurementData( Dev, &RangingData );
+
+	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f\n\r", RangingData.RangeStatus, RangingData.RangeMilliMeter,
+	  		( RangingData.SignalRateRtnMegaCps / 65536.0 ), RangingData.AmbientRateRtnMegaCps / 65336.0 );
+
+	  VL53L1_ClearInterruptAndStartMeasurement( Dev );
+	  LCD_DrawString(0, 200, buff);
 
   }
   /* USER CODE END 3 */
@@ -605,6 +625,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, LCD_BL_Pin|XPT2046_SPI_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(XSHUT_GPIO_Port, XSHUT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(XPT2046_SPI_CLK_GPIO_Port, XPT2046_SPI_CLK_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : XPT2046_SPI_MOSI_Pin XPT2046_SPI_CLK_Pin LCD_RST_Pin */
@@ -632,6 +655,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : XSHUT_Pin */
+  GPIO_InitStruct.Pin = XSHUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(XSHUT_GPIO_Port, &GPIO_InitStruct);
 
 }
 
