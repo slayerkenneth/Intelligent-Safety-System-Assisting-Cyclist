@@ -26,8 +26,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Library_Code/MPU6050.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Core/Inc/lcdtp.h ../Core/Inc/xpt2046.h ../Core/Inc/ws2812.h \
- ../Core/Inc/main.h ../Library_Code/MPU6050.h ../Core/Inc/a3144.h \
+ ../Core/Inc/lcdtp.h ../Core/Inc/xpt2046.h ../Library_Code/MPU6050.h \
+ ../Core/Inc/a3144.h \
  /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api.h \
  /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api_strings.h \
  /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_def.h \
@@ -79,8 +79,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Library_Code/MPU6050.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 ../Core/Inc/lcdtp.h:
 ../Core/Inc/xpt2046.h:
-../Core/Inc/ws2812.h:
-../Core/Inc/main.h:
 ../Library_Code/MPU6050.h:
 ../Core/Inc/a3144.h:
 /Users/kennethlok/STM32CubeIDE/workspace_1.9.0/Intelligent-Safety-System-Assisting-Cyclist/Drivers/VL53L1X/core/inc/vl53l1_api.h:

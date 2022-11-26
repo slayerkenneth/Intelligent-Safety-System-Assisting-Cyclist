@@ -23,7 +23,6 @@
 /* USER CODE BEGIN Includes */
 #include "lcdtp.h"
 #include "xpt2046.h"
-#include "ws2812.h"
 
 #include "math.h"
 #include <stdio.h>
@@ -196,9 +195,6 @@ int main(void)
   VL53L1_StartMeasurement( Dev );
 
   // End VL53L1X init
-
-  Set_LED(0, 255, 255, 0);
-  WS2812_Send();
 
   MPU6050_Initialize(&hi2c2);
   MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);

@@ -61,7 +61,7 @@ float GetRotationSpeed(void)
 //		rotSpeed = 0;
 //	}
 
-	return 30 / rotSpeed;
+	return 60 / rotSpeed;
 }
 
 void a3144_Init(void)
