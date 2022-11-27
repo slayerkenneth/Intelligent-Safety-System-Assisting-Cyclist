@@ -20,3 +20,4 @@
 ../Core/Src/lcdtp.c:463:6:LCD_DrawCross	24	static
 ../Core/Src/lcdtp.c:471:6:LCD_DrawString_Color	40	static
 ../Core/Src/lcdtp.c:498:6:LCD_GramScan	16	static
+../Core/Src/lcdtp.c:599:6:LCD_DrawEllipse	48	static

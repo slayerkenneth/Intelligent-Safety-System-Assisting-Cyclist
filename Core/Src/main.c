@@ -31,6 +31,7 @@
 #include "MPU6050.h"
 #include "a3144.h"
 #include "vl53l1_api.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,8 +53,10 @@
 I2C_HandleTypeDef hi2c2;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 DMA_HandleTypeDef hdma_tim1_ch1;
+DMA_HandleTypeDef hdma_tim2_ch2_ch4;
 
 SRAM_HandleTypeDef hsram1;
 
@@ -71,11 +74,124 @@ static void MX_I2C2_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// LED::
+
+#define MAX_LED 14
+#define USE_BRIGHTNESS 0
+
+
+uint8_t LED_Data[MAX_LED][4];
+uint8_t LED_Mod[MAX_LED][4];  // for brightness
+
+int datasentflag=0;
+
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+{
+	HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_4);
+	datasentflag=1;
+}
+
+void Set_LED (int LEDnum, int Red, int Green, int Blue)
+{
+	LED_Data[LEDnum][0] = LEDnum;
+	LED_Data[LEDnum][1] = Green;
+	LED_Data[LEDnum][2] = Red;
+	LED_Data[LEDnum][3] = Blue;
+}
+
+#define PI 3.14159265
+
+void Set_Brightness (int brightness)  // 0-45
+{
+#if USE_BRIGHTNESS
+
+	if (brightness > 45) brightness = 45;
+	for (int i=0; i<MAX_LED; i++)
+	{
+		LED_Mod[i][0] = LED_Data[i][0];
+		for (int j=1; j<4; j++)
+		{
+			float angle = 90-brightness;  // in degrees
+			angle = angle*PI / 180;  // in rad
+			LED_Mod[i][j] = (LED_Data[i][j])/(tan(angle));
+		}
+	}
+
+#endif
+
+}
+
+uint16_t pwmData[(24*MAX_LED)+50];
+
+void WS2812_Send (void)
+{
+	uint32_t indx=0;
+	uint32_t color;
+
+
+	for (int i= 0; i<MAX_LED; i++)
+	{
+#if USE_BRIGHTNESS
+		color = ((LED_Mod[i][1]<<16) | (LED_Mod[i][2]<<8) | (LED_Mod[i][3]));
+#else
+		color = ((LED_Data[i][1]<<16) | (LED_Data[i][2]<<8) | (LED_Data[i][3]));
+#endif
+
+		for (int i=23; i>=0; i--)
+		{
+			if (color&(1<<i))
+			{
+				pwmData[indx] = 60;  // 2/3 of 90
+			}
+
+			else pwmData[indx] = 30;  // 1/3 of 90
+
+			indx++;
+		}
+
+	}
+
+	for (int i=0; i<50; i++)
+	{
+		pwmData[indx] = 0;
+		indx++;
+	}
+
+	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_4, (uint32_t *)pwmData, indx);
+	while (!datasentflag){};
+	datasentflag = 0;
+}
+
+void Reset_LED (void)
+{
+	for (int i=0; i<MAX_LED; i++)
+	{
+		LED_Data[i][0] = i;
+		LED_Data[i][1] = 0;
+		LED_Data[i][2] = 0;
+		LED_Data[i][3] = 0;
+	}
+}
+
+uint16_t effStep = 0;
+
+void setTailligght (int light, int R, int G, int B, int bright){
+	  // Tail light
+	  Set_LED(light, R, G, B);
+	  Set_Brightness(bright);
+	  WS2812_Send();
+	  HAL_Delay(30);
+	  // Tail light
+}
+
+// End LED
+
 //void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 //{
 //	if (GPIO_Pin==VL53L1X_INT_Pin)
@@ -124,6 +240,7 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   LCD_INIT();
 
@@ -144,14 +261,19 @@ int main(void)
           ret = HAL_I2C_IsDeviceReady(&hi2c2, (uint16_t)(i<<1), 3, 5);
           if (ret != HAL_OK) /* No ACK Received At That Address */
           {
-        	  sprintf(text, "no %d", i);
-        	  LCD_DrawString(65, 105, text);
-        	  Delay(100000);
+        	  LCD_DrawString(105, 125, "Loading........");
+        	  Delay(10000);
         	  //println(&huart1,text);
           }
           else if(ret == HAL_OK)
           {
-        	  sprintf(text, "%x", i << 1);
+        	  sprintf(text, "Address: %x", i << 1);
+        	  if (i == 0x40){
+        		  LCD_DrawString(105, 125, "VL53L1X ToF port");
+        	  }
+        	  if (i == 103){
+        		  LCD_DrawString(105, 125, "MPU6050     port");
+        	  }
         	  LCD_DrawString(85, 125, text);
         	  Delay(10000000);
           }
@@ -216,9 +338,14 @@ int main(void)
 
   LCD_GramScan ( 1 );
   LCD_Clear ( 0, 0, 240, 320, WHITE );
-  LCD_Clear ( 90,  230,  60, 60, BLUE	);
-  LCD_Clear ( 30,  230,  60, 60,  YELLOW);
-  LCD_Clear ( 150,  230,  60, 60, YELLOW);
+  LCD_Clear ( 90,  282,  60, 60, BLUE	);
+  LCD_Clear ( 0,  282,  95, 38,  YELLOW);
+  LCD_Clear ( 150,  282,  95, 38, YELLOW);
+ // LCD_DrawString(20, 280, "Turn Left");
+  LCD_DrawString_Color (35, 285, "<---", YELLOW, BLACK );
+  LCD_DrawString_Color (170, 285, "--->", YELLOW, BLACK );
+
+  LCD_DrawEllipse ( 120, 100, 40, 20, RED);
   char buf[9];
 //  char text[10];
   float Ax, Ay, Az, Gx, Gy, Gz;
@@ -233,8 +360,13 @@ int main(void)
    * */
   a3144_Init();
   float rotSpeed = 0;
+  float rpm = 0;
   float tempSpeed = 0;
+  int Rangecount = 0;
 
+  // Reset Previus Tail lights
+  Reset_LED();
+  WS2812_Send();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -256,102 +388,133 @@ int main(void)
 	  Gy = MPU6050_Gy;
 	  Gz = MPU6050_Gz;
 
-	  sprintf(buf, "Ax: %0.2f", Ax);
-	  LCD_DrawString(20, 20, buf);
+	  if (Ay < -0.4){
+	 		  LCD_DrawString(80, 140, "Pitch Down");
+	 	  } else if (Ay > 0.4){
+	 		  LCD_DrawString(80, 140, " Pitch up ");
+	 	  } else{
+	 		  LCD_DrawString(80, 140, "No Pitch  ");
+	 	  }
 
-	  sprintf(buf, "Ay: %0.2f", Ay);
-	  LCD_DrawString(20, 40, buf);
+	 	  if (Ax < -0.5){
+	 		  LCD_DrawString(90, 160, " Right ");
+	 	  } else if (Ax > 0.5){
+	 		  LCD_DrawString(90, 160, " Left ");
+	 	  }	else{
+	 		  LCD_DrawString(90, 160, " Still ");
+	 	  }
 
-	  sprintf(buf, "Az: %0.2f", Az);
-	  LCD_DrawString(20, 60, buf);
-
-	  sprintf(buf, "Gx: %0.2f", Gx);
-	  LCD_DrawString(20, 80, buf);
-
-	  sprintf(buf, "Gy: %0.2f", Gy);
-	  LCD_DrawString(20, 100, buf);
-
-	  sprintf(buf, "Gz: %0.2f", Gz);
-	  LCD_DrawString(20, 120, buf);
-
-	  if (Ay < -0.55){
-		  LCD_DrawString(80, 140, "Pitch Down");
-	  } else if (Ay > 0.55){
-		  LCD_DrawString(80, 140, " Pitch up ");
-	  } else{
-		  LCD_DrawString(80, 140, "No Pitch  ");
-	  }
-
-	  if (Ax < -0.55){
-		  LCD_DrawString(90, 160, " Right ");
-	  } else if (Ax > 0.55){
-		  LCD_DrawString(90, 160, " Left ");
-	  }	else{
-		  LCD_DrawString(90, 160, " Still ");
-	  }
-
-	  if (Az < 0) {
-		  LCD_DrawString_Color(90, 180, " Crash?? ", RED, BLACK);
-		  SafetyStatus = 2;
-	  }
+	 	  if (Az < 0) {
+	 		  LCD_DrawString_Color(90, 180, " Crash?? ", RED, BLACK);
+	 		  for (int i =0; i < 14; i++){
+	 			 setTailligght(i, 255, 0, 0, 10);
+	 		  }
+	 		  SafetyStatus = 2;
+	 	  }
 
 
-	  HAL_Delay(200);
+	 	  HAL_Delay(200);
 
-	  if ( touchFlag == 0 )
-	  {
-		  if ( XPT2046_Get_TouchedPoint ( & touchCoordinate, & strXPT2046_TouchPara ) )
-		  {
-			  if ( ( touchCoordinate->y > 232 ) && ( touchCoordinate->y < 282 ) )
-			  {
-				  if ( ( touchCoordinate->x > 95 ) && ( touchCoordinate->x < 145 ) )
-				  {
-					  LCD_DrawString(71, 200, "     Reset    ");
-					  SafetyStatus = 0;
-					  LCD_Clear(90, 180, 90, 20, WHITE);
-					  LCD_Clear(70, 200, 90, 20, WHITE);
-				  }
+	 	  if ( touchFlag == 0 )
+	 	  {
+	 		  if ( XPT2046_Get_TouchedPoint ( & touchCoordinate, & strXPT2046_TouchPara ) )
+	 		  {
+	 			  if ( ( touchCoordinate->y > 282 ) && ( touchCoordinate->y < 400) )
+	 			  {
+	 				  if ( ( touchCoordinate->x > 95 ) && ( touchCoordinate->x < 145 ) )
+	 				  {
+	 					  LCD_DrawString(71, 200, "     Reset    ");
+	 					  SafetyStatus = 0;
+	 					  LCD_Clear(90, 180, 90, 20, WHITE);
+	 					  LCD_Clear(70, 200, 90, 20, WHITE);
+	 					  Reset_LED();
+	 					  WS2812_Send();
+	 					 Rangecount = 0;
+	 				  }
 
-				  if (touchCoordinate->x < 90)
-				  {
-					  SafetyStatus = 1;
-					  LCD_DrawString(71, 200, "Turning Left! ");
-				  }
+	 				  if (touchCoordinate->x < 90)
+	 				  {
+	 					  SafetyStatus = 1;
+	 					  LCD_DrawString(71, 200, "Turning Left! ");
+	 					  setTailligght(0, 255, 255, 0, 10);
+	 					  setTailligght(1, 255, 255, 0, 10);
+	 					  setTailligght(2, 255, 255, 0, 10);
+	 				  }
 
-				  if (touchCoordinate->x > 150)
-				  {
-					  SafetyStatus = 1;
-					  LCD_DrawString(71, 200, "Turning Right!");
-				  }
-			  }
+	 				  if (touchCoordinate->x > 150)
+	 				  {
+	 					  SafetyStatus = 1;
+	 					  LCD_DrawString(71, 200, "Turning Right!");
+	 					  setTailligght(11, 255, 255, 0, 10);
+	 					  setTailligght(12, 255, 255, 0, 10);
+	 					  setTailligght(13, 255, 255, 0, 10);
+	 				  }
+	 			  }
 
+	 		  }
+	 		  touchFlag = 1;
+	 	  }
+	 	  else {
+	 //		  LCD_DrawString(70, 200, "..............");
+	 		  touchFlag = 0;
+	 	  }
+	 	  HAL_Delay(50);
+
+
+
+		  rpm = GetRotationSpeed(); // RPM not speed
+		  if (rpm < 1){
+			  rpm = 0;
 		  }
-		  touchFlag = 1;
-	  }
-	  else {
-//		  LCD_DrawString(70, 200, "..............");
-		  touchFlag = 0;
-	  }
-	  HAL_Delay(50);
+		  sprintf(buf, "%0.2f RPM", rpm);
+		  LCD_DrawString(90, 90, buf);
+
+		  rotSpeed = rpm * 0.7 * 3.14 / 60;
+		  sprintf(buf, "%0.2f m/s", rotSpeed);
+		  LCD_DrawString(90, 120, buf);
+
+		  if (tempSpeed > rotSpeed * 0.6){
+			  setTailligght(4, 255, 0, 0, 10);
+			  setTailligght(5, 255, 0, 0, 10);
+			  setTailligght(6, 255, 0, 0, 10);
+			  setTailligght(7, 255, 0, 0, 10);
+			  setTailligght(8, 255, 0, 0, 10);
+			  setTailligght(9, 255, 0, 0, 10);
+			  setTailligght(10, 255, 0, 0, 10);
+		  }
+		  else {
+			  setTailligght(4, 0, 0, 0, 1);
+			  setTailligght(5, 0, 0, 0, 1);
+			  setTailligght(6, 0, 0, 0, 1);
+			  setTailligght(7, 0, 0, 0, 1);
+			  setTailligght(8, 0, 0, 0, 1);
+			  setTailligght(9, 0, 0, 0, 1);
+			  setTailligght(10, 0, 0, 0, 1);
+		  }
+
+		  tempSpeed = rotSpeed;
+
+		  // Get Distance Sensor Data
+		  VL53L1_WaitMeasurementDataReady( Dev );
+
+		  VL53L1_GetRangingMeasurementData( Dev, &RangingData );
 
 
+		  if(RangingData.RangeMilliMeter < 2000){
+			  Rangecount++;
+			  if(Rangecount == 3){
+				  LCD_DrawString_Color (80, 200, "REAR ALERT!!", RED, BLACK );
+				  Rangecount = 0;
+			  }
+		  }
+		  else if(RangingData.RangeMilliMeter > 2000){
+			  Rangecount = 0;
+		  }
 
-	  rotSpeed = GetRotationSpeed();
-	  sprintf(buf, "RotSpeed: %0.2f", rotSpeed);
-	  LCD_DrawString(30, 0, buf);
 
-	  // Get Distance Sensor Data
-	  VL53L1_WaitMeasurementDataReady( Dev );
-
-	  VL53L1_GetRangingMeasurementData( Dev, &RangingData );
-
-	  sprintf( (char*)buff, "%d, %d, %.2f, %.2f", RangingData.RangeStatus, RangingData.RangeMilliMeter,
-	  		( RangingData.SignalRateRtnMegaCps / 65536.0 ), RangingData.AmbientRateRtnMegaCps / 65336.0 );
-
-	  VL53L1_ClearInterruptAndStartMeasurement( Dev );
-	  LCD_DrawString(0, 200, buff);
-
+		  VL53L1_ClearInterruptAndStartMeasurement( Dev );
   }
+
   /* USER CODE END 3 */
 }
 
@@ -538,6 +701,65 @@ static void MX_TIM1_Init(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 0;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 89;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+  HAL_TIM_MspPostInit(&htim2);
+
+}
+
+/**
   * @brief TIM3 Initialization Function
   * @param None
   * @retval None
@@ -595,6 +817,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+  /* DMA1_Channel7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
 
 }
 
@@ -610,9 +835,9 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, XPT2046_SPI_MOSI_Pin|LCD_RST_Pin, GPIO_PIN_RESET);

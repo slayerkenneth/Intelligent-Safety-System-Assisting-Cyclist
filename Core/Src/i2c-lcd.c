@@ -71,5 +71,3 @@ void lcd_send_string (char *str)
 {
 	while (*str) lcd_send_data (*str++);
 }
-
-

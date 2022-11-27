@@ -595,3 +595,29 @@ void LCD_GramScan ( uint8_t ucOption )
 	
 	
 }
+
+void LCD_DrawEllipse ( uint16_t usC, uint16_t usP, uint16_t SR, uint16_t LR, uint16_t usColor)
+{
+	/*
+	 *  Task 3 : Implement LCD_DrawEllipse by using LCD_DrawDot
+	 */
+
+	for(int y=-LR; y<=LR; y++) {
+			for(int x=-SR; x<=SR; x++) {
+					if(x*x*LR*LR+y*y*SR*SR <= LR*LR*SR*SR)
+						LCD_DrawDot(usC + x, usP + y, usColor);
+			}
+	}
+
+	int whiteLR = LR - 1;
+	int whiteSR = SR - 1;
+
+	for(int y=-whiteLR; y<=whiteLR; y++) {
+			for(int x=-whiteSR; x<=whiteSR; x++) {
+					if(x*x*whiteLR*whiteLR+y*y*whiteSR*whiteSR <= whiteLR*whiteLR*whiteSR*whiteSR)
+						LCD_DrawDot(usC + x, usP + y, WHITE);
+			}
+	}
+
+
+}
