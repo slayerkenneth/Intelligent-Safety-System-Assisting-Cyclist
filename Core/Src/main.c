@@ -80,8 +80,8 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-// LED::
 
+// LED Parameters:
 #define MAX_LED 14
 #define USE_BRIGHTNESS 0
 
@@ -90,6 +90,9 @@ uint8_t LED_Data[MAX_LED][4];
 uint8_t LED_Mod[MAX_LED][4];  // for brightness
 
 int datasentflag=0;
+
+
+// :ED Function callbacks
 
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 {
@@ -186,7 +189,7 @@ void setTailligght (int light, int R, int G, int B, int bright){
 	  Set_LED(light, R, G, B);
 	  Set_Brightness(bright);
 	  WS2812_Send();
-	  HAL_Delay(30);
+	  HAL_Delay(10);
 	  // Tail light
 }
 
@@ -208,7 +211,7 @@ void setTailligght (int light, int R, int G, int B, int bright){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	// VL53L1X new Attempt with 07Ver
+	// VL53L1X variable references
 	uint8_t buff[50];
 	VL53L1_RangingMeasurementData_t RangingData;
 	VL53L1_Dev_t  vl53l1_c; // center module
@@ -242,9 +245,11 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
+  // LCD Screen init
   LCD_INIT();
 
-  // Init VL53L1X
+  // Init VL53L1X ToF
   Dev->I2cHandle = &hi2c2;
   Dev->I2cDevAddr = 0x52;
 
@@ -307,7 +312,6 @@ int main(void)
 //  HAL_I2C_Master_Transmit( &hi2c1, EXPANDER_1_ADDR, buff, 2, 0xFFFF );
 
   HAL_Delay( 2 );
-//
   VL53L1_WaitDeviceBooted( Dev );
   VL53L1_DataInit( Dev );
   VL53L1_StaticInit( Dev );
@@ -318,9 +322,13 @@ int main(void)
 
   // End VL53L1X init
 
+  // MPU6050 Init
+
   MPU6050_Initialize(&hi2c2);
   MPU6050_SetScaleAccelRange(&hi2c2, MPU6050_ACCEL_RANGE_8_G);
   MPU6050_SetScaleGyroRange(&hi2c2, MPU6050_GYRO_RANGE_2000_DEG);
+
+  // MPU6050 Init end
 
   macXPT2046_CS_DISABLE();
 //  __HAL_RCC_I2C2_CLK_DISABLE();
@@ -331,8 +339,10 @@ int main(void)
    Delay(100000);
 
   LCD_Clear (50, 80, 140, 70, RED);
-  LCD_DrawString(65, 105, "SmartBike DEMO");
+  LCD_DrawString(65, 105, "  ISSAC  DEMO ");
   HAL_Delay(1000);
+
+  //Touchscreen calibration
 
   while( ! XPT2046_Touch_Calibrate () );
 
@@ -342,13 +352,18 @@ int main(void)
   LCD_Clear ( 0,  282,  95, 38,  YELLOW);
   LCD_Clear ( 150,  282,  95, 38, YELLOW);
  // LCD_DrawString(20, 280, "Turn Left");
+
+  //Button UI
   LCD_DrawString_Color (35, 285, "<---", YELLOW, BLACK );
   LCD_DrawString_Color (170, 285, "--->", YELLOW, BLACK );
 
   LCD_DrawEllipse ( 120, 100, 40, 20, RED);
   char buf[9];
 //  char text[10];
-  float Ax, Ay, Az, Gx, Gy, Gz;
+
+  // MPU variables
+  float Ax, Ay, Az;
+//  float Gx, Gy, Gz;
 
   strType_XPT2046_Coordinate touchCoordinate[4];
   int touchFlag = 0;
@@ -384,9 +399,9 @@ int main(void)
 	  Ay = MPU6050_Ay;
 	  Az = MPU6050_Az;
 
-	  Gx = MPU6050_Gx;
-	  Gy = MPU6050_Gy;
-	  Gz = MPU6050_Gz;
+//	  Gx = MPU6050_Gx;
+//	  Gy = MPU6050_Gy;
+//	  Gz = MPU6050_Gz;
 
 	  if (Ay < -0.4){
 	 		  LCD_DrawString(80, 140, "Pitch Down");
@@ -429,7 +444,7 @@ int main(void)
 	 					  LCD_Clear(70, 200, 90, 20, WHITE);
 	 					  Reset_LED();
 	 					  WS2812_Send();
-	 					 Rangecount = 0;
+	 					  Rangecount = 0;
 	 				  }
 
 	 				  if (touchCoordinate->x < 90)
@@ -469,7 +484,7 @@ int main(void)
 		  sprintf(buf, "%0.2f RPM", rpm);
 		  LCD_DrawString(90, 90, buf);
 
-		  rotSpeed = rpm * 0.7 * 3.14 / 60;
+		  rotSpeed = rpm * 0.737 * 3.14 / 60;
 		  sprintf(buf, "%0.2f m/s", rotSpeed);
 		  LCD_DrawString(90, 120, buf);
 
